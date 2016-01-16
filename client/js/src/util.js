@@ -6,18 +6,7 @@ module.exports.stdCamera = new THREE.PerspectiveCamera(
 	1000 // far
 );
 
-module.exports.cube1 = new THREE.Mesh(
-	new THREE.BoxGeometry(1, .1, 1),
-	new THREE.MeshPhongMaterial({
-		ambient: 0x555555,
-		color: 0x990000,
-		specular: 0xffffff,
-		shininess: 50,
-		shading: THREE.SmoothShading,
-		name:"cube"
-	})
-);
-module.exports.cube2 = new THREE.Mesh(
+module.exports.tile = new THREE.Mesh(
 	new THREE.BoxGeometry(1, .1, 1),
 	new THREE.MeshPhongMaterial({
 		ambient: 0x555555,
@@ -29,10 +18,29 @@ module.exports.cube2 = new THREE.Mesh(
 	})
 );
 
-module.exports.cube2.onmousedown = module.exports.cube1.onmousedown = function(){
-	this.material.transparent = true;
-	this.material.opacity = 0.1;
+module.exports.addTerrain = function(terrain, terrainTypes, scene){
+	terrain.map((row,x)=>{
+		row.map((type,y)=>{
+			var clone = terrainTypes[type].clone();
+			clone.position.x = x -2
+			clone.position.z = y -2
+			scene.add(clone);
+		})
+	})
 }
+
+module.exports.city = new THREE.Mesh(
+	new THREE.CylinderGeometry(.5, .5, .5, 30, 30),
+	new THREE.MeshLambertMaterial({
+		color:0xffffff
+	})
+)
+
+
+// module.exports.cube2.onmousedown = module.exports.cube1.onmousedown = function(){
+// 	this.material.transparent = true;
+// 	this.material.opacity = 0.1;
+// }
 
 
 var ring = module.exports.ring = new THREE.Mesh(

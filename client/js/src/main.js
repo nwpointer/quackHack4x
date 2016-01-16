@@ -17,35 +17,50 @@ var example = (function(){
 		scene        = new THREE.Scene(),
 		renderer     = window.WebGLRenderingContext ? new THREE.WebGLRenderer() :THREE.CanvasRenderer(),
 		afix         = require('./util.js').fullScreenAttachment,
-		light        = new THREE.PointLight(0xffffff, 6, 40),
+		light        = new THREE.PointLight(0xffffff, 4, 40),
 		ambient      = new THREE.AmbientLight(0x4000ff),
-		D 		     = 1, 
+		D 		     = 5, 
 		height       = window.innerHeight,
 		width        = window.innerWidth,
 		aspect       = width / height,
 		camera       = new THREE.OrthographicCamera(-D * aspect, D * aspect, D, -D, 1, 1000),
-		cube1	     = require('./util.js').cube1,
-		cube2	     = require('./util.js').cube2,
+		tile	     = require('./util.js').tile,
 		// clock        = new THREE.Clock(),
 		raycaster    = new THREE.Raycaster(),
 		mouse        = new THREE.Vector2(),
 		ring         = require('./util.js').ring,
-		winResize    = new WindowResize(renderer, camera)
+		winResize    = new WindowResize(renderer, camera),
+		util         = require('./util.js')
 	;	
 
 	function init () {
 		afix(renderer, 'scene');
 		renderer.setClearColor( 0xf0f0f0 );
-		
 		light.position.set(10, 20, 15);
 		camera.position.set(20, 20, 20);
-		cube1.position.set(0,0,0);
-		cube2.position.set(1,0,0);
 		camera.lookAt(new THREE.Vector3(0,0,0)); 
 
-		scene.add(ring);
-		scene.add(cube1);
-		scene.add(cube2);
+		var terrainTypes = [tile];
+		var terrain = [
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+			[0,0,0,0,0,0],
+		];
+		util.addTerrain(terrain, terrainTypes, scene);
+		
+		var whiteCity = util.city.clone();
+		whiteCity.position.z = -1;
+		whiteCity.position.x = 2;
+
+		var blackCity = util.city.clone();	
+		blackCity.position.z = 2;
+		blackCity.position.x = -1;
+
+		scene.add(whiteCity);
+		scene.add(blackCity);
 		scene.add(camera);
 		scene.add(ambient);
 		scene.add(light);
@@ -67,37 +82,37 @@ var example = (function(){
 	}
 
 	// EVENTS
-	function onMouseMove(event) {
-		mouse.x = (event.clientX / renderer.domElement.width) * 2 - 1;
-		mouse.y = -(event.clientY / renderer.domElement.height) * 2 + 1;
-	}
+	// function onMouseMove(event) {
+	// 	mouse.x = (event.clientX / renderer.domElement.width) * 2 - 1;
+	// 	mouse.y = -(event.clientY / renderer.domElement.height) * 2 + 1;
+	// }
 
-	function getIntersectedObject(){
-		raycaster.setFromCamera(mouse, camera);
-		var intersects = raycaster.intersectObjects(scene.children, true);
-		if (intersects.length > 0) {
-			return intersects[0].object;
-		}
-	}
+	// function getIntersectedObject(){
+	// 	raycaster.setFromCamera(mouse, camera);
+	// 	var intersects = raycaster.intersectObjects(scene.children, true);
+	// 	if (intersects.length > 0) {
+	// 		return intersects[0].object;
+	// 	}
+	// }
 
-	function onDocumentMouseDown(event) {
-		var object = getIntersectedObject();
-		if(object && object.onmousedown){
-			object.onmousedown();
-		}
+	// function onDocumentMouseDown(event) {
+	// 	var object = getIntersectedObject();
+	// 	if(object && object.onmousedown){
+	// 		object.onmousedown();
+	// 	}
 
-		ring.material.opacity = 1;
+	// 	ring.material.opacity = 1;
 
-	}
+	// }
 
-	function onDocumentMouseUP(event){
-		ring.material.opacity = 0;
-	}
+	// function onDocumentMouseUP(event){
+	// 	ring.material.opacity = 0;
+	// }
 
 	window.onload = init();
-	window.onmousedown = onDocumentMouseDown;
-	window.onmouseup = onDocumentMouseUP;
-	window.onmousemove = onMouseMove;
+	// window.onmousedown = onDocumentMouseDown;
+	// window.onmouseup = onDocumentMouseUP;
+	// window.onmousemove = onMouseMove;
 
 	return{
 		scene : scene
