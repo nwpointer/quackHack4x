@@ -3,6 +3,9 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var enforcementObject = {};
+var clientMap = {};
+
 app.use(express.static(__dirname + '/'));
 
 
@@ -18,30 +21,29 @@ io.on('connection', function(socket){
       packet.data = ["*"].concat(args);
       onevent.call(this, packet);      // additional call to catch-all
   };
-  console.log('a user connected');
+
+  var clientId = socket.client.conn.id;
+
+  console.log("Client: "+clientId+" has connected.");
+
+  clientMap.clientId = null;
+
   socket.on('disconnect', function(){
-    console.log('User disconnected');
+    console.log("Client: "+socket.client.conn.id+" has disconnected.");
+    delete clientMap.socket.client.conn.id;
   });
   socket.on("*",function(event,data) {
+      console.log("Client: "+socket.client.conn.id+" has sent an event.");
+      if(event.split("_").length > 1) {
+        console.log("Client: "+socket.client.conn.id+" is requesting auth.");
+        console.log("Here's the split event: ", event.split("_"));
+        clientMap.socket.client.conn.id = event.split("_")[1];
+      }
       console.log("Event: "+event);
       console.log("Data: "+data);
+      io.emit(event, data);
   });
-  // socket.on('chat message', function(msg){
-  //   io.emit('chat message', msg);
-  //   console.log('Got message: '+msg);
-  // });
-  // socket.on('turretPlacement', function(msg){
-  //   io.emit('turretPlacement', msg);
-  //   console.log('Got turretPlacement: '+msg);
-  // });
-  // socket.on('hit', function(msg){
-  //   io.emit('hit', msg);
-  //   console.log('Got hit!');
-  // });
-  // socket.on('creeperLocations', function(msg){
-  //   io.emit('creeperLocations', msg);
-  //   console.log('Got creeperLocations: '+msg);
-  // });
+
 });
 
 http.listen(80, function(){
