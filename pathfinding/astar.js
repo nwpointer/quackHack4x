@@ -6,8 +6,50 @@ function PathNode(location, heuristic, cost, parent){
 		parent:parent
 	}
 }
+
 function getHeuristic(newLocation, finish) {
 	return Math.abs(newLocation[0] - finish[0]) + Math.abs(newLocation[1] - finish[1]);
+}
+
+
+//1 is bottom left, 8 is top right
+function createPath(node, start) {
+	var path = [];
+	var to = node;
+	while ( node != start ) {
+		var from = node.parent;
+		var xMove = to.location[0] - from.location[0];
+		var yMove = to.location[1] - from.location[1];
+		if (xMove < 0) {
+			if (yMove < 0) {
+				path.push(1); //move down and to the left
+			} else if (yMove > 0) {
+				path.push(6); //move up and to the left
+			} else {
+				path.push(4); //move to the left
+			}
+		} else if (xMove > 0) {
+			if (yMove < 0) {
+				path.push(3); //move down and to the right
+			} else if (yMove > 0) {
+				path.push(8); //move up and to the right
+			} else {
+				path.push(5); //move to the right
+			}
+		} else { //xMove == 0, no horizontal movement
+			if (yMove < 0) {
+				path.push(2); //move down
+			} else if (yMove > 0) {
+				path.push(7); //move up
+			} else {
+				console.log("createPath: next move not found");
+			}
+		}
+
+	}
+
+
+	return path;
 }
 
 function scanSurround(node, finish) {
@@ -31,6 +73,7 @@ function scanSurround(node, finish) {
 		}
 	}
 }
+
 function aStar(start, finish) {
 	var openList = [];
 	var closedList = [];
