@@ -55,7 +55,8 @@ var example = (function(){
 		var creep = util.creeps(black);
 		// creep.position.set(0,0,0);
 		var tower = util.tower(black);
-		tower.position.set(1,0,0);
+		tower.position.set(-1,0,1);
+		// tower.position.set(-1,0,1);
 		scene.add(tower);
 		scene.add(creep);
 		

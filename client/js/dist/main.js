@@ -52,7 +52,8 @@ var example = function () {
 		var creep = util.creeps(black);
 		// creep.position.set(0,0,0);
 		var tower = util.tower(black);
-		tower.position.set(1, 0, 0);
+		tower.position.set(-1, 0, 1);
+		// tower.position.set(-1,0,1);
 		scene.add(tower);
 		scene.add(creep);
 
@@ -153,18 +154,22 @@ module.exports.tile = function (color) {
 };
 
 module.exports.tower = function (color) {
-	var a = new THREE.BoxGeometry(.25, 1, .25);
-	var walls = new THREE.BoxGeometry(1, .25, 1);
-	// var b = new THREE.BoxGeometry(.1, .4, .1);
-	// var c = new THREE.BoxGeometry(.1, .4, .1);
-	return new THREE.Mesh(a, new THREE.MeshPhongMaterial({
-		color: color,
-		name: "creep"
+	var tower = new THREE.Mesh(new THREE.BoxGeometry(.1, 1, .1));
+	var walls = new THREE.Mesh(new THREE.BoxGeometry(.3, .1, .3));
+	var combo = new THREE.Geometry();
+
+	combo.merge(tower.geometry, tower.matrix);
+	combo.merge(walls.geometry, walls.matrix);
+
+	var city = new THREE.Mesh(combo, new THREE.MeshLambertMaterial({
+		color: color
 	}));
+
+	return city;
 };
 
 module.exports.creeps = function (color) {
-	var a = new THREE.BoxGeometry(.1, .4, .1);
+	var a = new THREE.BoxGeometry(.075, .4, .075);
 	// var b = new THREE.BoxGeometry(.1, .4, .1);
 	// var c = new THREE.BoxGeometry(.1, .4, .1);
 	return new THREE.Mesh(a, new THREE.MeshPhongMaterial({
