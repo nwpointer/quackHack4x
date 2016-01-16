@@ -15,6 +15,8 @@
 var WindowResize = require('./vendor/threex.windowresize.js');
 var example = (function(){
 	"use strict";
+	const PLACE_TURRET = "PLACE_TURRET";
+	const CREEP        = "CREEP";
 	var THREE        = require('three'),
 		scene        = new THREE.Scene(),
 		renderer     = window.WebGLRenderingContext ? new THREE.WebGLRenderer() :THREE.CanvasRenderer(),
@@ -34,7 +36,9 @@ var example = (function(){
 		winResize    = new WindowResize(renderer, camera),
 		util         = require('./util.js'),
 		black        = 0x222222,
-		white        = 0xffffff
+		white        = 0xffffff,
+		mode 		 = PLACE_TURRET,
+		player       = {}
 	;	
 
 	window.BottomBar = require('./ui.js');
@@ -44,7 +48,9 @@ var example = (function(){
 		renderer.setClearColor( 0xf0f0f0 );
 		light.position.set(10, 20, 15);
 		camera.position.set(20, 20, 20);
-		camera.lookAt(new THREE.Vector3(0,0,0)); 
+		camera.lookAt(new THREE.Vector3(0,0,0));
+
+		player = {color:white} 
 
 		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
 		var terrain = [
@@ -61,9 +67,6 @@ var example = (function(){
 		tower.position.set(-1,0,1);
 		scene.add(tower);
 
-		var creep = util.creeps(black);
-		creep.position.set(0,0,0);
-		scene.add(creep);
 		
 		var whiteCity = util.city(0xffffff);
 		whiteCity.position.z = -1;
@@ -78,6 +81,8 @@ var example = (function(){
 		scene.add(camera);
 		scene.add(ambient);
 		scene.add(light);
+
+		setInterval(creepFactory,1000);
 		
 		render();
 	}
@@ -96,37 +101,62 @@ var example = (function(){
 	}
 
 	// EVENTS
-	// function onMouseMove(event) {
-	// 	mouse.x = (event.clientX / renderer.domElement.width) * 2 - 1;
-	// 	mouse.y = -(event.clientY / renderer.domElement.height) * 2 + 1;
-	// }
+	function onMouseMove(event) {
+		mouse.x = (event.clientX / renderer.domElement.width) * 2 - 1;
+		mouse.y = -(event.clientY / renderer.domElement.height) * 2 + 1;
+		// console.log(mouse.x);
+	}
 
-	// function getIntersectedObject(){
-	// 	raycaster.setFromCamera(mouse, camera);
-	// 	var intersects = raycaster.intersectObjects(scene.children, true);
-	// 	if (intersects.length > 0) {
-	// 		return intersects[0].object;
-	// 	}
-	// }
+	function getIntersectedObject(){
+		raycaster.setFromCamera(mouse, camera);
+		var intersects = raycaster.intersectObjects(scene.children, true);
+		if (intersects.length > 0) {
+			return intersects[0].object;
+		}
+	}
 
-	// function onDocumentMouseDown(event) {
-	// 	var object = getIntersectedObject();
-	// 	if(object && object.onmousedown){
-	// 		object.onmousedown();
-	// 	}
+	function onDocumentMouseDown(event) {
+		var object = getIntersectedObject();
+		console.log(object.position);
+		if(mode == PLACE_TURRET){
+			console.log("place turret");
+			var tower = (util.tower(player.color));
+			tower.position.set(object.position.x, object.position.y+.01, object.position.z);
+			scene.add(tower);
+			// send message
+		}
+	}
 
-	// 	ring.material.opacity = 1;
+	function getRandomArbitrary(min, max) {
+	  return Math.random() * (max - min) + min;
+	}
 
-	// }
+	function getRandomVector(min,max){
+		var vec = new THREE.Vector3(
+			getRandomArbitrary(min, max),
+			0,
+			getRandomArbitrary(min, max)
+		)
+		console.log(vec);
+		return vec;
+	}
+
+	function creepFactory(){
+		console.log("CREEP");
+		var creep = util.creeps(player.color);
+		var rp = getRandomVector(0,1);
+		creep.position.set(rp.x, rp.y, rp.z+1)
+		scene.add(creep);
+	}
 
 	// function onDocumentMouseUP(event){
 	// 	ring.material.opacity = 0;
 	// }
 
 	window.onload = init();
-	// window.onmousedown = onDocumentMouseDown;
+	window.onmousedown = onDocumentMouseDown;
 	// window.onmouseup = onDocumentMouseUP;
-	// window.onmousemove = onMouseMove;
+	window.onmousemove = onMouseMove;
 
 	return{
 		scene : scene
