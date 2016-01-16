@@ -2,7 +2,10 @@ var BottomBar = React.createClass({
 	getInitialState: function(){
   	return {
     	numGold: 100,
-      trtDisabled: false
+      trtDisabled: false,
+      creepText: "Charging the Creepers",
+      creepDisabled: true,
+      creepCount: 0
     }
   },
   
@@ -45,6 +48,8 @@ var BottomBar = React.createClass({
     	<div> {this.state.numGold} Gold 
       <br/>
       <button onClick={this.placeTurret} disabled={this.state.trtDisabled}> Place Turret</button>
+      <br/>
+      <button disabled={this.state.creepDisabled}>{this.state.creepText}</button>
       </div>
     );
   }
