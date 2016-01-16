@@ -22,6 +22,7 @@ function inClosedList(newLocation, closedList) {
 	for (var i = 0; i < closedList.length; i++) {
 		if (newLocation[0] == closedList[i].location[0]) {
 			if (newLocation[1] == closedList[i].location[1]) {
+				console.log(newLocation," is in the closed list.");
 				return true;
 			}
 		}
@@ -110,7 +111,7 @@ function scanSurround(node, finish, closedList, openList) {
 
 				var newNode = PathNode(newLocation, getHeuristic(newLocation, finish), node.cost + newCost, node);
 				openList.push(newNode);
-				openList.sort(function (a,b) {return ((a.cost+a.heuristic) > (b.cost + b.heuristic))} );
+				openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
 
 			}
 		}
@@ -130,7 +131,7 @@ function aStar(start, finish) {
 		// console.log("openList is ", openList);
 		// var temp = openList.slice(0,1);
 		var temp = openList.shift();
-		openList.sort(function (a,b) {return ((a.cost+a.heuristic) > (b.cost + b.heuristic))} );
+		openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
 		// if (temp[0].location[0] == finish[0] && temp[0].location[1] == finish[1]) {
 			if (temp.heuristic == 0) {
 			//follow parent links back to start, generate breadcrumbs
@@ -147,7 +148,7 @@ function aStar(start, finish) {
 
 function main() {
 	console.log("Let's run A*");
-	var list = aStar([0,0],[0,5]);
+	var list = aStar([0,0],[0,10]);
 	console.log("the path is: ",list);
 }
 main();
