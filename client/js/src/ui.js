@@ -34,6 +34,13 @@ var BottomBar = React.createClass({
       this.countersChanged();
     }
   },
+    
+  launchCreeps: function() {
+    this.setState({
+      creepCount: 0
+    })
+    this.countersChanged();
+  },
   
   countersChanged: function() {
     if (this.state.numGold >= 50) {
@@ -47,15 +54,15 @@ var BottomBar = React.createClass({
             turretImg: "dimturret.png"
       });
     }
-    if (this.state.creepCount >= 20) {
+    if (this.state.creepCount >= 30) {
         this.setState({
             creepText: "10 Creeps Ready to Launch!"
         })
-    } else if (this.state.creepCount >= 9) {
+    } else if (this.state.creepCount >= 20) {
         this.setState({
             creepText: "3 Creeps Ready to Launch"
         })
-    } else if (this.state.creepCount >= 3) {
+    } else if (this.state.creepCount >= 10) {
         this.setState({
             creepText: "1 Creep Ready to Launch",
             creepDisabled: false
@@ -82,13 +89,13 @@ var BottomBar = React.createClass({
         </div>
         
         <div className="turret-bank">
-            <button onClick={this.placeTurret} disabled={this.state.trtDisabled}>
-                <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" />
+            <button onClick={this.placeTurret} disabled={this.state.trtDisabled} >
+                <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" />
             </button>
         </div>
         
         <div class="fire-creep">
-            <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default">
+            <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps}>
                 {this.state.creepText}
             </button>
         </div>
