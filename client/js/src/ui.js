@@ -8,20 +8,22 @@ var BottomBar = React.createClass({
       trtDisabled: false,
       creepText: "Charging the Creepers",
       creepDisabled: true,
-      creepCount: 0
+      creepCount: 0,
+      turretImg: "turret.png"
     }
   },
   
   componentDidMount: function() {
-  	setTimeout(this.incrementGold,1000);
+  	setTimeout(this.incrementAllCounters,1000);
   },
   
-  incrementGold: function (){
+  incrementAllCounters: function (){
   	this.setState({
-    	numGold: this.state.numGold + 1
+    	numGold: this.state.numGold + 1,
+        creepCount: this.state.creepCount + 1
     });
-    this.goldChanged();
-    setTimeout(this.incrementGold,1000);
+    this.countersChanged();
+    setTimeout(this.incrementAllCounters,1000);
   },
   
   placeTurret: function() {
@@ -29,32 +31,67 @@ var BottomBar = React.createClass({
       this.setState({
         numGold: this.state.numGold - 50
       })
-      this.goldChanged();
+      this.countersChanged();
     }
   },
   
-  goldChanged: function() {
+  countersChanged: function() {
     if (this.state.numGold >= 50) {
       this.setState({
-    		trtDisabled: false
+    		trtDisabled: false,
+            turretImg: "turret.png"
       });
     } else {
 	    this.setState({
-    		trtDisabled: true
+    		trtDisabled: true,
+            turretImg: "dimturret.png"
       });
+    }
+    if (this.state.creepCount >= 20) {
+        this.setState({
+            creepText: "10 Creeps Ready to Launch!"
+        })
+    } else if (this.state.creepCount >= 9) {
+        this.setState({
+            creepText: "3 Creeps Ready to Launch"
+        })
+    } else if (this.state.creepCount >= 3) {
+        this.setState({
+            creepText: "1 Creep Ready to Launch",
+            creepDisabled: false
+        })
+    } else {
+        this.setState({
+            creepText: "Charging the Creepers",
+            creepDisabled: true
+        })
     }
   },
   
   render: function() {
   	return(
     	<div> 
-        {this.state.numGold} 
-        <img id="coin-img" src="coins.png" alt="Coins" />
-        <button onClick={this.placeTurret} disabled={this.state.trtDisabled}>
-          <img id="turret-img" src="turret.png" alt="Plain Turret - 50g" />
-        </button>
-        <br />
-        <button disabled={this.state.creepDisabled}>{this.state.creepText}</button>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <div className="numcoins">
+            {this.state.numGold} 
+        </div>
+        
+        <div className="coins">
+            <img id="coin-img" src="coins.png" alt="Coins" />
+        </div>
+        
+        <div className="turret-bank">
+            <button onClick={this.placeTurret} disabled={this.state.trtDisabled}>
+                <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" />
+            </button>
+        </div>
+        
+        <div class="fire-creep">
+            <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default">
+                {this.state.creepText}
+            </button>
+        </div>
       </div>
     );
   }

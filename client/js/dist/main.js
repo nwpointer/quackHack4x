@@ -51,12 +51,13 @@ var example = function () {
 		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
 		var terrain = [[0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 1, 0], [0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0]];
 		util.addTerrain(terrain, terrainTypes, scene);
-		var creep = util.creeps(black);
-		// creep.position.set(0,0,0);
+
 		var tower = util.tower(black);
 		tower.position.set(-1, 0, 1);
-		// tower.position.set(-1,0,1);
 		scene.add(tower);
+
+		var creep = util.creeps(black);
+		creep.position.set(0, 0, 0);
 		scene.add(creep);
 
 		var whiteCity = util.city(0xffffff);
@@ -142,70 +143,110 @@ window.React = require('react');
 window.ReactDOM = require('react-dom');
 
 var BottomBar = React.createClass({
-  displayName: 'BottomBar',
+    displayName: 'BottomBar',
 
-  getInitialState: function getInitialState() {
-    return {
-      numGold: 100,
-      trtDisabled: false,
-      creepText: "Charging the Creepers",
-      creepDisabled: true,
-      creepCount: 0
-    };
-  },
+    getInitialState: function getInitialState() {
+        return {
+            numGold: 100,
+            trtDisabled: false,
+            creepText: "Charging the Creepers",
+            creepDisabled: true,
+            creepCount: 0,
+            turretImg: "turret.png"
+        };
+    },
 
-  componentDidMount: function componentDidMount() {
-    setTimeout(this.incrementGold, 1000);
-  },
+    componentDidMount: function componentDidMount() {
+        setTimeout(this.incrementAllCounters, 1000);
+    },
 
-  incrementGold: function incrementGold() {
-    this.setState({
-      numGold: this.state.numGold + 1
-    });
-    this.goldChanged();
-    setTimeout(this.incrementGold, 1000);
-  },
+    incrementAllCounters: function incrementAllCounters() {
+        this.setState({
+            numGold: this.state.numGold + 1,
+            creepCount: this.state.creepCount + 1
+        });
+        this.countersChanged();
+        setTimeout(this.incrementAllCounters, 1000);
+    },
 
-  placeTurret: function placeTurret() {
-    if (this.state.numGold >= 50) {
-      this.setState({
-        numGold: this.state.numGold - 50
-      });
-      this.goldChanged();
+    placeTurret: function placeTurret() {
+        if (this.state.numGold >= 50) {
+            this.setState({
+                numGold: this.state.numGold - 50
+            });
+            this.countersChanged();
+        }
+    },
+
+    countersChanged: function countersChanged() {
+        if (this.state.numGold >= 50) {
+            this.setState({
+                trtDisabled: false,
+                turretImg: "turret.png"
+            });
+        } else {
+            this.setState({
+                trtDisabled: true,
+                turretImg: "dimturret.png"
+            });
+        }
+        if (this.state.creepCount >= 20) {
+            this.setState({
+                creepText: "10 Creeps Ready to Launch!"
+            });
+        } else if (this.state.creepCount >= 9) {
+            this.setState({
+                creepText: "3 Creeps Ready to Launch"
+            });
+        } else if (this.state.creepCount >= 3) {
+            this.setState({
+                creepText: "1 Creep Ready to Launch",
+                creepDisabled: false
+            });
+        } else {
+            this.setState({
+                creepText: "Charging the Creepers",
+                creepDisabled: true
+            });
+        }
+    },
+
+    render: function render() {
+        return React.createElement(
+            'div',
+            null,
+            React.createElement('link', { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' }),
+            React.createElement('link', { rel: 'stylesheet', type: 'text/css', href: 'style.css' }),
+            React.createElement(
+                'div',
+                { className: 'numcoins' },
+                this.state.numGold
+            ),
+            React.createElement(
+                'div',
+                { className: 'coins' },
+                React.createElement('img', { id: 'coin-img', src: 'coins.png', alt: 'Coins' })
+            ),
+            React.createElement(
+                'div',
+                { className: 'turret-bank' },
+                React.createElement(
+                    'button',
+                    { onClick: this.placeTurret, disabled: this.state.trtDisabled },
+                    React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g' })
+                )
+            ),
+            React.createElement(
+                'div',
+                { 'class': 'fire-creep' },
+                React.createElement(
+                    'button',
+                    { disabled: this.state.creepDisabled, id: 'firebtn', type: 'button', className: 'btn btn-default' },
+                    this.state.creepText
+                )
+            )
+        );
     }
-  },
-
-  goldChanged: function goldChanged() {
-    if (this.state.numGold >= 50) {
-      this.setState({
-        trtDisabled: false
-      });
-    } else {
-      this.setState({
-        trtDisabled: true
-      });
-    }
-  },
-
-  render: function render() {
-    return React.createElement(
-      'div',
-      null,
-      this.state.numGold,
-      React.createElement('img', { id: 'coin-img', src: 'coins.png', alt: 'Coins' }),
-      React.createElement(
-        'button',
-        { onClick: this.placeTurret, disabled: this.state.trtDisabled },
-        React.createElement('img', { id: 'turret-img', src: 'turret.png', alt: 'Plain Turret - 50g' })
-      ),
-      React.createElement('br', null),
-      React.createElement(
-        'button',
-        { disabled: this.state.creepDisabled },
-        this.state.creepText
-      )
-    );
-  }
 });
 
 ReactDOM.render(React.createElement(BottomBar, null), document.getElementById('container'));
