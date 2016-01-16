@@ -4,6 +4,7 @@ var io = require('socket.io')(http);
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/scripts/socketCommunication.js');
 });
 
 io.on('connection', function(socket){
