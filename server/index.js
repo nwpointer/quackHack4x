@@ -44,14 +44,17 @@ io.on('connection', function(socket){
         console.log("Now clientMap looks like this: ", clientMap);
         if(authMap.gameName && authMap.gameName < 2) {
           authMap.gameName++;
-          io.emit(event, true);
+          console.log("Allowing auth");
+          io.emit(event, "1");
           return;
         }
         else if(authMap.gameName && authMap.gameName >= 2) {
-          io.emit(event, false);
+          console.log("Preventing auth");
+          io.emit(event, "0");
           return;
         }
         else {
+          console.log("Allowing auth");
           authMap.gameName = 1;
           io.emit(event, true);
           return;
