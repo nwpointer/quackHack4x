@@ -8,11 +8,14 @@ socket.on('chat message', function(msg){
 });
 
 socket.on('turretPlacement', function(msg){
-	$('#messages').append($('<li>').html('<b>Turret placement:</b> ' + msg));
+	console.log("We got a turretPlacement " + JSON.parse(msg));
+	msg = '<b>Turret placement:</b> ' + msg;
+	$('#messages').append($('<li>').html(msg));
 });
 
 socket.on('hit', function(msg){
-	$('#messages').append($('<li>').html('<b>Someone was hit:</b> ' + msg));
+	console.log("We got a hit ");
+	$('#messages').append($('<li>').html('<b>Someone was hit:</b>'));
 });
 
 socket.on('creeperLocations', function(msg){
