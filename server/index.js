@@ -2,7 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-app.use('/scripts', express.static('scripts'));
+app.use(express.static(__dirname + '/'));
 
 
 app.get('/', function(req, res){
