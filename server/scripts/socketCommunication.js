@@ -44,7 +44,7 @@ function sendTurretPlacement(e) {
 	var turretPlacementString = JSON.stringify(turret);
 
     console.log("Sending turret coords at " + turretPlacementString);
-    //socket.emit('turretPlacement', turretPlacementString);
+    socket.emit('turretPlacement', turretPlacementString);
 }
 
 $("#canvas").on("click", validateTurretPlacement);
@@ -54,7 +54,7 @@ $("#canvas").on("click", validateTurretPlacement);
 
 function sendHit() {
     console.log("I hit you!");
-    //socket.emit('hit', "true");
+    socket.emit('hit', "true");
 }
 
 $("#hit").on("click", sendHit);
