@@ -15,6 +15,18 @@ io.on('connection', function(socket){
     io.emit('chat message', msg);
     console.log('Got message: '+msg);
   });
+  socket.on('turretPlacement', function(msg){
+    io.emit('turretPlacement', msg);
+    console.log('Got turretPlacement: '+msg);
+  });
+  socket.on('hit', function(msg){
+    io.emit('hit', msg);
+    console.log('Got hit!');
+  });
+  socket.on('creeperLocations', function(msg){
+    io.emit('creeperLocations', msg);
+    console.log('Got creeperLocations: '+msg);
+  });
 });
 
 http.listen(80, function(){
