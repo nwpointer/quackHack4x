@@ -18,6 +18,7 @@ var example = (function(){
 	const PLACE_TURRET = "PLACE_TURRET";
 	const CREEP        = "CREEP";
 	var THREE        = require('three'),
+		TWEEN 		 = require('tween.js'),
 		scene        = new THREE.Scene(),
 		renderer     = window.WebGLRenderingContext ? new THREE.WebGLRenderer() :THREE.CanvasRenderer(),
 		afix         = require('./util.js').fullScreenAttachment,
@@ -50,7 +51,7 @@ var example = (function(){
 		camera.position.set(20, 20, 20);
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
-		player = {color:white} 
+		player = {color:white, creeps:[]} 
 
 		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
 		var terrain = [
@@ -82,18 +83,127 @@ var example = (function(){
 		scene.add(ambient);
 		scene.add(light);
 
-		setInterval(creepFactory,1000);
+		creepFactory();
+		// right(1,player.creeps[0]);
+
+		
+
+		var move = function(object, direction, distance, then){
+				var position;
+				var target;
+				position = {
+					x:object.position.x,
+					z:object.position.z
+				};
+				switch(direction){
+					case 7:
+						target = {
+							x:object.position.x-distance,
+							z:object.position.z-distance
+						};
+						break;
+					case 2:
+						target = {
+							x:object.position.x+distance,
+							z:object.position.z+distance
+						};
+						break;
+					case 4:
+						target = {
+							x:object.position.x-distance,
+							z:object.position.z+distance
+						};
+						break;
+					case 5:
+						target = {
+							x:object.position.x+distance,
+							z:object.position.z-distance
+						};
+						break;
+					case 6:
+						target = {
+							x:object.position.x-distance,
+						};
+						break;
+					case 3:
+						target = {
+							x:object.position.x+distance,
+						};
+						break;
+					case 8:
+						target = {
+							z:object.position.z-distance
+						};
+						break;
+					case 1:
+						target = {
+							z:object.position.z+distance
+						};
+						break;						
+				}
+
+				var tween = new TWEEN.Tween(position).to(target,1000);
+				tween.onUpdate(function(){
+					object.position.x =position.x;
+					object.position.z =position.z;
+				})
+				// tween.delay(500);
+				// tween.easing(TWEEN.Easing.Elastic.InOut);
+				// tween.start();
+				tween.onComplete(function(){
+					if(then){
+						then();
+					}
+				})
+				return tween;
+		}
+
+		// var a = move(player.creeps[0], 6, 1, function(){
+		// 	move(player.creeps[0], 8, 1, function(){
+		// 		move(player.creeps[0], 7, 1).start()
+		// 	}).start();
+		// }).start();
+
+
+		var path = [6,8,7,1,1];
+
+		var combinePath = function(arr){
+			var dir = arr.pop();
+			if(dir){
+				return move(player.creeps[0],dir, 1, function(){
+					var n = combinePath(arr);
+					if(n){
+						n.start();
+					}
+				})
+				combinePath(arr);
+			}
+		}
+
+		combinePath(path).start();
+
+		// path.map(function(x){
+		// 	move(player.creeps[0], x, 1, function())
+		// })
+		// var b = move(player.creeps[0], 4, 1)
+		// a.chain(b());
+
+		// a.start();
+		
+
+		// setInterval(creepFactory,1000);
 		
 		render();
 	}
 
-	var left  = (n)=>{camera.position.y+=n*.005; camera.position.x+=n*.01;},
-		right = (n)=>{camera.position.y-=n*.005; camera.position.x-=n*.01;},
-		up    = (n)=>{camera.position.y-=n*.005;},
-		down  = (n)=>{camera.position.y+=n*.005;};
+	var left  = (n,object)=>{object.position.y+=n*.005; object.position.x+=n*.01;},
+		right = (n,object)=>{object.position.y-=n*.005; object.position.x-=n*.01;},
+		up    = (n,object)=>{object.position.y-=n*.005;},
+		down  = (n,object)=>{object.position.y+=n*.005;};
 
 	function render () {
 		requestAnimationFrame(render);
+		TWEEN.update();
 		// camera.zoom += .01;
 		// camera.updateProjectionMatrix();
 		// var delta = clock.getDelta();
@@ -146,8 +256,11 @@ var example = (function(){
 		var creep = util.creeps(player.color);
 		var rp = getRandomVector(0,1);
 		creep.position.set(rp.x, rp.y, rp.z+1)
+		player.creeps.push(creep);
 		scene.add(creep);
 	}
+
+
 
 	// function onDocumentMouseUP(event){
 	// 	ring.material.opacity = 0;
@@ -157,8 +270,9 @@ var example = (function(){
 	window.onmousedown = onDocumentMouseDown;
 	// window.onmouseup = onDocumentMouseUP;
 	window.onmousemove = onMouseMove;
+	window.player = player;
 
 	return{
-		scene : scene
+		scene : scene,
 	}
 })();
