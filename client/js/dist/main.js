@@ -176,7 +176,8 @@ var BottomBar = React.createClass({
             trtDisabled: false,
             creepText: "Charging the Creepers",
             creepDisabled: true,
-            creepCount: 0
+            creepCount: 0,
+            turretImg: "turret.png"
         };
     },
 
@@ -202,25 +203,34 @@ var BottomBar = React.createClass({
         }
     },
 
+    launchCreeps: function launchCreeps() {
+        this.setState({
+            creepCount: 0
+        });
+        this.countersChanged();
+    },
+
     countersChanged: function countersChanged() {
         if (this.state.numGold >= 50) {
             this.setState({
-                trtDisabled: false
+                trtDisabled: false,
+                turretImg: "turret.png"
             });
         } else {
             this.setState({
-                trtDisabled: true
+                trtDisabled: true,
+                turretImg: "dimturret.png"
             });
         }
-        if (this.state.creepCount >= 20) {
+        if (this.state.creepCount >= 30) {
             this.setState({
                 creepText: "10 Creeps Ready to Launch!"
             });
-        } else if (this.state.creepCount >= 9) {
+        } else if (this.state.creepCount >= 20) {
             this.setState({
                 creepText: "3 Creeps Ready to Launch"
             });
-        } else if (this.state.creepCount >= 3) {
+        } else if (this.state.creepCount >= 10) {
             this.setState({
                 creepText: "1 Creep Ready to Launch",
                 creepDisabled: false
@@ -237,6 +247,8 @@ var BottomBar = React.createClass({
         return React.createElement(
             'div',
             null,
+            React.createElement('link', { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' }),
+            React.createElement('link', { rel: 'stylesheet', type: 'text/css', href: 'style.css' }),
             React.createElement(
                 'div',
                 { className: 'numcoins' },
@@ -253,7 +265,7 @@ var BottomBar = React.createClass({
                 React.createElement(
                     'button',
                     { onClick: this.placeTurret, disabled: this.state.trtDisabled },
-                    React.createElement('img', { id: 'turret-img', src: 'turret.png', alt: 'Plain Turret - 50g' })
+                    React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g', id: 'trtbtn' })
                 )
             ),
             React.createElement(
@@ -261,7 +273,7 @@ var BottomBar = React.createClass({
                 { 'class': 'fire-creep' },
                 React.createElement(
                     'button',
-                    { disabled: this.state.creepDisabled, id: 'firebtn', type: 'button', className: 'btn btn-default' },
+                    { disabled: this.state.creepDisabled, id: 'firebtn', type: 'button', className: 'btn btn-default', onClick: this.launchCreeps },
                     this.state.creepText
                 )
             )
