@@ -54,11 +54,13 @@ var BottomBar = React.createClass({
         })
     } else if (this.state.creepCount >= 3) {
         this.setState({
-            creepText: "1 Creep Ready to Launch"
+            creepText: "1 Creep Ready to Launch",
+            creepDisabled: true
         })
     } else {
         this.setState({
-            creepText: "Charging the Creepers"
+            creepText: "Charging the Creepers",
+            creepDisabled: false
         })
     }
   },
