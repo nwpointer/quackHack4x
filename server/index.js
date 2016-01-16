@@ -29,15 +29,16 @@ io.on('connection', function(socket){
   clientMap.clientId = null;
 
   socket.on('disconnect', function(){
-    console.log("Client: "+this.client.conn.id+" has disconnected.");
-    delete clientMap.this.client.conn.id;
+    //console.log("Client: "+this.client.conn.id+" has disconnected.");
+    //delete clientMap.this.client.conn.id;
   });
   socket.on("*",function(event,data) {
-      console.log("Client: "+this.client.conn.id+" has sent an event.");
+      var clientId = this.client.conn.id;
+      console.log("Client: "+clientId+" has sent an event.");
       if(event.split("_").length > 1) {
-        console.log("Client: "+this.client.conn.id+" is requesting auth.");
+        console.log("Client: "+clientId+" is requesting auth.");
         console.log("Here's the split event: ", event.split("_"));
-        clientMap.this.client.conn.id = event.split("_")[1];
+        clientMap.clientId = event.split("_")[1];
       }
       console.log("Event: "+event);
       console.log("Data: "+data);
