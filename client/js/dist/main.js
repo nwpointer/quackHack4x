@@ -151,7 +151,8 @@ var BottomBar = React.createClass({
             trtDisabled: false,
             creepText: "Charging the Creepers",
             creepDisabled: true,
-            creepCount: 0
+            creepCount: 0,
+            turretImg: "turret.png"
         };
     },
 
@@ -180,11 +181,13 @@ var BottomBar = React.createClass({
     countersChanged: function countersChanged() {
         if (this.state.numGold >= 50) {
             this.setState({
-                trtDisabled: false
+                trtDisabled: false,
+                turretImg: "turret.png"
             });
         } else {
             this.setState({
-                trtDisabled: true
+                trtDisabled: true,
+                turretImg: "dimturret.png"
             });
         }
         if (this.state.creepCount >= 20) {
@@ -212,6 +215,8 @@ var BottomBar = React.createClass({
         return React.createElement(
             'div',
             null,
+            React.createElement('link', { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' }),
+            React.createElement('link', { rel: 'stylesheet', type: 'text/css', href: 'style.css' }),
             React.createElement(
                 'div',
                 { className: 'numcoins' },
@@ -228,7 +233,7 @@ var BottomBar = React.createClass({
                 React.createElement(
                     'button',
                     { onClick: this.placeTurret, disabled: this.state.trtDisabled },
-                    React.createElement('img', { id: 'turret-img', src: 'turret.png', alt: 'Plain Turret - 50g' })
+                    React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g' })
                 )
             ),
             React.createElement(
