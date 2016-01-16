@@ -51,12 +51,13 @@ var example = function () {
 		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
 		var terrain = [[0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 1, 0], [0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0]];
 		util.addTerrain(terrain, terrainTypes, scene);
-		var creep = util.creeps(black);
-		// creep.position.set(0,0,0);
+
 		var tower = util.tower(black);
 		tower.position.set(-1, 0, 1);
-		// tower.position.set(-1,0,1);
 		scene.add(tower);
+
+		var creep = util.creeps(black);
+		creep.position.set(0, 0, 0);
 		scene.add(creep);
 
 		var whiteCity = util.city(0xffffff);
