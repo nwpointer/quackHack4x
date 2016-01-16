@@ -23,7 +23,7 @@ var example = function () {
 	    afix = require('./util.js').fullScreenAttachment,
 	    light = new THREE.PointLight(0xffffff, 4, 40),
 	    ambient = new THREE.AmbientLight(0x4000ff),
-	    D = 5,
+	    D = 3,
 	    height = window.innerHeight,
 	    width = window.innerWidth,
 	    aspect = width / height,
@@ -35,7 +35,9 @@ var example = function () {
 	    mouse = new THREE.Vector2(),
 	    ring = require('./util.js').ring,
 	    winResize = new WindowResize(renderer, camera),
-	    util = require('./util.js');
+	    util = require('./util.js'),
+	    black = 0x222222,
+	    white = 0xffffff;
 
 	function init() {
 		afix(renderer, 'scene');
@@ -44,15 +46,21 @@ var example = function () {
 		camera.position.set(20, 20, 20);
 		camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-		var terrainTypes = [tile];
-		var terrain = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
+		var terrain = [[0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 1, 0], [0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0]];
 		util.addTerrain(terrain, terrainTypes, scene);
+		var creep = util.creeps(black);
+		// creep.position.set(0,0,0);
+		var tower = util.tower(black);
+		tower.position.set(1, 0, 0);
+		scene.add(tower);
+		scene.add(creep);
 
-		var whiteCity = util.city.clone();
+		var whiteCity = util.city(0xffffff);
 		whiteCity.position.z = -1;
 		whiteCity.position.x = 2;
 
-		var blackCity = util.city.clone();
+		var blackCity = util.city(0x222222);
 		blackCity.position.z = 2;
 		blackCity.position.x = -1;
 
@@ -125,7 +133,7 @@ var example = function () {
 }();
 
 },{"./util.js":2,"./vendor/threex.windowresize.js":3,"three":4}],2:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var THREE = require('three');
 module.exports.stdCamera = new THREE.PerspectiveCamera(35, // fov deg
@@ -133,14 +141,37 @@ window.innerWidth / window.innerHeight, 1, //near
 1000 // far
 );
 
-module.exports.tile = new THREE.Mesh(new THREE.BoxGeometry(1, .1, 1), new THREE.MeshPhongMaterial({
-	ambient: 0x555555,
-	color: 0x990000,
-	specular: 0xffffff,
-	shininess: 50,
-	shading: THREE.SmoothShading,
-	name: "cube"
-}));
+module.exports.tile = function (color) {
+	return new THREE.Mesh(new THREE.BoxGeometry(1, .1, 1), new THREE.MeshPhongMaterial({
+		ambient: 0x555555,
+		color: color,
+		specular: 0xffffff,
+		shininess: 50,
+		shading: THREE.SmoothShading,
+		name: "cube"
+	}));
+};
+
+module.exports.tower = function (color) {
+	var a = new THREE.BoxGeometry(.25, 1, .25);
+	var walls = new THREE.BoxGeometry(1, .25, 1);
+	// var b = new THREE.BoxGeometry(.1, .4, .1);
+	// var c = new THREE.BoxGeometry(.1, .4, .1);
+	return new THREE.Mesh(a, new THREE.MeshPhongMaterial({
+		color: color,
+		name: "creep"
+	}));
+};
+
+module.exports.creeps = function (color) {
+	var a = new THREE.BoxGeometry(.1, .4, .1);
+	// var b = new THREE.BoxGeometry(.1, .4, .1);
+	// var c = new THREE.BoxGeometry(.1, .4, .1);
+	return new THREE.Mesh(a, new THREE.MeshPhongMaterial({
+		color: color,
+		name: "creep"
+	}));
+};
 
 module.exports.addTerrain = function (terrain, terrainTypes, scene) {
 	terrain.map(function (row, x) {
@@ -153,9 +184,20 @@ module.exports.addTerrain = function (terrain, terrainTypes, scene) {
 	});
 };
 
-module.exports.city = new THREE.Mesh(new THREE.CylinderGeometry(.5, .5, .5, 30, 30), new THREE.MeshLambertMaterial({
-	color: 0xffffff
-}));
+module.exports.city = function (color) {
+	var tower = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, 1.5, 30, 30));
+	var walls = new THREE.Mesh(new THREE.BoxGeometry(.5, .5, .5));
+	var combo = new THREE.Geometry();
+
+	combo.merge(tower.geometry, tower.matrix);
+	combo.merge(walls.geometry, walls.matrix);
+
+	var city = new THREE.Mesh(combo, new THREE.MeshLambertMaterial({
+		color: color
+	}));
+
+	return city;
+};
 
 // module.exports.cube2.onmousedown = module.exports.cube1.onmousedown = function(){
 // 	this.material.transparent = true;

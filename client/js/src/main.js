@@ -19,7 +19,7 @@ var example = (function(){
 		afix         = require('./util.js').fullScreenAttachment,
 		light        = new THREE.PointLight(0xffffff, 4, 40),
 		ambient      = new THREE.AmbientLight(0x4000ff),
-		D 		     = 5, 
+		D 		     = 3, 
 		height       = window.innerHeight,
 		width        = window.innerWidth,
 		aspect       = width / height,
@@ -30,7 +30,9 @@ var example = (function(){
 		mouse        = new THREE.Vector2(),
 		ring         = require('./util.js').ring,
 		winResize    = new WindowResize(renderer, camera),
-		util         = require('./util.js')
+		util         = require('./util.js'),
+		black        = 0x222222,
+		white        = 0xffffff
 	;	
 
 	function init () {
@@ -40,22 +42,28 @@ var example = (function(){
 		camera.position.set(20, 20, 20);
 		camera.lookAt(new THREE.Vector3(0,0,0)); 
 
-		var terrainTypes = [tile];
+		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
 		var terrain = [
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
-			[0,0,0,0,0,0],
+			[0,1,1,0,0,0],
+			[0,0,0,1,1,0],
+			[0,0,0,1,1,0],
+			[0,1,0,0,1,0],
+			[0,0,0,0,1,0],
+			[0,0,1,0,0,0],
 		];
 		util.addTerrain(terrain, terrainTypes, scene);
+		var creep = util.creeps(black);
+		// creep.position.set(0,0,0);
+		var tower = util.tower(black);
+		tower.position.set(1,0,0);
+		scene.add(tower);
+		scene.add(creep);
 		
-		var whiteCity = util.city.clone();
+		var whiteCity = util.city(0xffffff);
 		whiteCity.position.z = -1;
 		whiteCity.position.x = 2;
 
-		var blackCity = util.city.clone();	
+		var blackCity = util.city(0x222222);	
 		blackCity.position.z = 2;
 		blackCity.position.x = -1;
 

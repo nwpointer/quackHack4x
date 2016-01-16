@@ -6,17 +6,46 @@ module.exports.stdCamera = new THREE.PerspectiveCamera(
 	1000 // far
 );
 
-module.exports.tile = new THREE.Mesh(
-	new THREE.BoxGeometry(1, .1, 1),
-	new THREE.MeshPhongMaterial({
-		ambient: 0x555555,
-		color: 0x990000,
-		specular: 0xffffff,
-		shininess: 50,
-		shading: THREE.SmoothShading,
-		name:"cube"
-	})
-);
+module.exports.tile = function(color){
+	return new THREE.Mesh(
+		new THREE.BoxGeometry(1, .1, 1),
+		new THREE.MeshPhongMaterial({
+			ambient: 0x555555,
+			color: color,
+			specular: 0xffffff,
+			shininess: 50,
+			shading: THREE.SmoothShading,
+			name:"cube"
+		})
+	);
+}
+
+module.exports.tower = function(color){
+	var a = new THREE.BoxGeometry(.25, 1, .25);
+	var walls = new THREE.BoxGeometry(1,.25,1);
+	// var b = new THREE.BoxGeometry(.1, .4, .1);
+	// var c = new THREE.BoxGeometry(.1, .4, .1);
+	return new THREE.Mesh(
+			a,
+			new THREE.MeshPhongMaterial({
+				color: color,
+				name:"creep"
+			})
+		);
+}
+
+module.exports.creeps = function(color){
+	var a = new THREE.BoxGeometry(.1, .4, .1);
+	// var b = new THREE.BoxGeometry(.1, .4, .1);
+	// var c = new THREE.BoxGeometry(.1, .4, .1);
+	return new THREE.Mesh(
+			a,
+			new THREE.MeshPhongMaterial({
+				color: color,
+				name:"creep"
+			})
+		);
+}
 
 module.exports.addTerrain = function(terrain, terrainTypes, scene){
 	terrain.map((row,x)=>{
@@ -29,12 +58,23 @@ module.exports.addTerrain = function(terrain, terrainTypes, scene){
 	})
 }
 
-module.exports.city = new THREE.Mesh(
-	new THREE.CylinderGeometry(.5, .5, .5, 30, 30),
-	new THREE.MeshLambertMaterial({
-		color:0xffffff
-	})
-)
+module.exports.city = function(color){
+	var tower = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, 1.5, 30, 30));
+	var walls = new THREE.Mesh(new THREE.BoxGeometry(.5,.5,.5));
+	var combo = new THREE.Geometry();
+
+	combo.merge(tower.geometry, tower.matrix);
+	combo.merge(walls.geometry, walls.matrix);
+
+	var city = new THREE.Mesh(
+		combo,
+		new THREE.MeshLambertMaterial({
+			color:color
+		})
+	);
+
+	return city;
+}
 
 
 // module.exports.cube2.onmousedown = module.exports.cube1.onmousedown = function(){
