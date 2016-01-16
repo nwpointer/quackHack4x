@@ -10,6 +10,8 @@
 	- abstract into modules
 */
 
+
+
 var WindowResize = require('./vendor/threex.windowresize.js');
 var example = (function(){
 	"use strict";
@@ -34,6 +36,9 @@ var example = (function(){
 		black        = 0x222222,
 		white        = 0xffffff
 	;	
+
+	
+	window.BottomBar = require('./ui.js');
 
 	function init () {
 		afix(renderer, 'scene');
