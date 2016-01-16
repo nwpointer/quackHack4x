@@ -3,11 +3,12 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var enforcementObject = {};
+//authMap ties between game name and number of players in that game
+var authMap = {};
+//clientMap ties between client ids and game names
 var clientMap = {};
 
 app.use(express.static(__dirname + '/'));
-
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -25,10 +26,10 @@ io.on('connection', function(socket){
   var clientId = socket.client.conn.id;
 
   console.log("Client: "+clientId+" has connected.");
-
   clientMap.clientId = null;
 
   socket.on('disconnect', function(){
+    console.log("Trying to disconnect, this is: ", this);
     //console.log("Client: "+this.client.conn.id+" has disconnected.");
     //delete clientMap.this.client.conn.id;
   });
@@ -38,7 +39,23 @@ io.on('connection', function(socket){
       if(event.split("_").length > 1) {
         console.log("Client: "+clientId+" is requesting auth.");
         console.log("Here's the split event: ", event.split("_"));
-        clientMap.clientId = event.split("_")[1];
+        var gameName = event.split("_")[1];
+        clientMap.clientId = gameName;
+        console.log("Now clientMap looks like this: ", clientMap);
+        if(authMap.gameName && authMap.gameName < 2) {
+          authMap.gameName++;
+          io.emit(event, true);
+          return;
+        }
+        else if(authMap.gameName && authMap.gameName >= 2) {
+          io.emit(event, false);
+          return;
+        }
+        else {
+          authMap.gameName = 1;
+          io.emit(event, true);
+          return;
+        }
       }
       console.log("Event: "+event);
       console.log("Data: "+data);
