@@ -29,8 +29,8 @@ io.on('connection', function(socket){
   clientMap.clientId = null;
 
   socket.on('disconnect', function(){
-    console.log("Trying to disconnect, this is: ", this);
-    //console.log("Client: "+this.client.conn.id+" has disconnected.");
+    //console.log("Trying to disconnect, this is: ", this);
+    console.log("Client: "+this.client.conn.id+" has disconnected.");
     //delete clientMap.this.client.conn.id;
   });
   socket.on("*",function(event,data) {
@@ -39,18 +39,20 @@ io.on('connection', function(socket){
       if(event.split("_").length > 1) {
         console.log("Client: "+clientId+" is requesting auth.");
         console.log("Here's the split event: ", event.split("_"));
+        var guid = event.split("_")[1];
         var gameName = event.split("_")[1];
+        event = guid + '_auth';
         clientMap.clientId = gameName;
         console.log("Now clientMap looks like this: ", clientMap);
         if(authMap.gameName && authMap.gameName < 2) {
           authMap.gameName++;
           console.log("Allowing auth");
-          io.emit(event, "1");
+          io.emit(event, true);
           return;
         }
         else if(authMap.gameName && authMap.gameName >= 2) {
           console.log("Preventing auth");
-          io.emit(event, "0");
+          io.emit(event, false);
           return;
         }
         else {

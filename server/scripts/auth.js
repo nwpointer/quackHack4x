@@ -14,11 +14,12 @@ function guid() {
 }
 
 var uuid = guid();
-var authMsg = uuid;
+var authMsg = uuid+'_auth';
 
 //-------------Socket listeners---------------
 
 socket.on(authMsg, function(msg){
+	console.log("Got an authMsg back with msg: "+msg);
 	if(msg) {
 		console.log("Approved.");
 	}
@@ -32,8 +33,7 @@ socket.on(authMsg, function(msg){
 
 $('#getAuth').on("click", function(){
 	var gameName = $('#inputBox').val();
-	authMsg = uuid + '_' + gameName +'_auth';
-	socket.emit(authMsg, 'true');
-		$('#inputBox').val('');
+	socket.emit(uuid + '_' + gameName +'_auth', 'true');
+	$('#inputBox').val('');
 	return false;
 });
