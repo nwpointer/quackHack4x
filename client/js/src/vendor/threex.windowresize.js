@@ -28,7 +28,7 @@ THREEx.WindowResize	= function(renderer, camera){
 		// notify the renderer of the size change
 		renderer.setSize( window.innerWidth, window.innerHeight )
 		// update the camera
-		var D 		 = 1, 
+		var D 		 = 5, 
 		height       = window.innerHeight,
 		width        = window.innerWidth,
 		aspect       = width / height

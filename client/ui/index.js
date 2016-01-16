@@ -44,9 +44,10 @@ var BottomBar = React.createClass({
   
   render: function() {
   	return(
-    	<div> {this.state.numGold} Gold 
-      <br/>
-      <button onClick={this.placeTurret} disabled={this.state.trtDisabled}> Place Turret</button>
+    	<div> {this.state.numGold} <img id="coin-img" src="coins.png" alt="Coins" style="width:50px;height:40px;">
+        <button onClick={this.placeTurret} disabled={this.state.trtDisabled}>
+        <img id="turret-img" src="turret.png" alt="Plain Turret - 50g" style="width:50px;height:40px;">
+        </button>
       <br/>
       <button disabled={this.state.creepDisabled}>{this.state.creepText}</button>
       </div>

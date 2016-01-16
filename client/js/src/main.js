@@ -10,45 +10,79 @@
 	- abstract into modules
 */
 
+
+
 var WindowResize = require('./vendor/threex.windowresize.js');
 var example = (function(){
 	"use strict";
+	const PLACE_TURRET = "PLACE_TURRET";
+	const CREEP        = "CREEP";
 	var THREE        = require('three'),
 		scene        = new THREE.Scene(),
 		renderer     = window.WebGLRenderingContext ? new THREE.WebGLRenderer() :THREE.CanvasRenderer(),
 		afix         = require('./util.js').fullScreenAttachment,
-		light        = new THREE.PointLight(0xffffff, 6, 40),
+		light        = new THREE.PointLight(0xffffff, 4, 40),
 		ambient      = new THREE.AmbientLight(0x4000ff),
-		D 		     = 1, 
+		D 		     = 3, 
 		height       = window.innerHeight,
 		width        = window.innerWidth,
 		aspect       = width / height,
 		camera       = new THREE.OrthographicCamera(-D * aspect, D * aspect, D, -D, 1, 1000),
-		cube1	     = require('./util.js').cube1,
-		cube2	     = require('./util.js').cube2,
+		tile	     = require('./util.js').tile,
 		// clock        = new THREE.Clock(),
 		raycaster    = new THREE.Raycaster(),
 		mouse        = new THREE.Vector2(),
 		ring         = require('./util.js').ring,
-		winResize    = new WindowResize(renderer, camera)
+		winResize    = new WindowResize(renderer, camera),
+		util         = require('./util.js'),
+		black        = 0x222222,
+		white        = 0xffffff,
+		mode 		 = PLACE_TURRET,
+		player       = {}
 	;	
+
+	window.BottomBar = require('./ui.js');
 
 	function init () {
 		afix(renderer, 'scene');
 		renderer.setClearColor( 0xf0f0f0 );
-		
 		light.position.set(10, 20, 15);
 		camera.position.set(20, 20, 20);
-		cube1.position.set(0,0,0);
-		cube2.position.set(1,0,0);
-		camera.lookAt(new THREE.Vector3(0,0,0)); 
+		camera.lookAt(new THREE.Vector3(0,0,0));
 
-		scene.add(ring);
-		scene.add(cube1);
-		scene.add(cube2);
+		player = {color:white} 
+
+		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
+		var terrain = [
+			[0,1,1,0,0,0],
+			[0,0,0,1,1,0],
+			[0,0,0,1,1,0],
+			[0,1,0,0,1,0],
+			[0,0,0,0,1,0],
+			[0,0,1,0,0,0],
+		];
+		util.addTerrain(terrain, terrainTypes, scene);
+
+		var tower = (util.tower(black));
+		tower.position.set(-1,0,1);
+		scene.add(tower);
+
+		
+		var whiteCity = util.city(0xffffff);
+		whiteCity.position.z = -1;
+		whiteCity.position.x = 2;
+
+		var blackCity = util.city(0x222222);	
+		blackCity.position.z = 2;
+		blackCity.position.x = -1;
+
+		scene.add(whiteCity);
+		scene.add(blackCity);
 		scene.add(camera);
 		scene.add(ambient);
 		scene.add(light);
+
+		setInterval(creepFactory,1000);
 		
 		render();
 	}
@@ -70,6 +104,7 @@ var example = (function(){
 	function onMouseMove(event) {
 		mouse.x = (event.clientX / renderer.domElement.width) * 2 - 1;
 		mouse.y = -(event.clientY / renderer.domElement.height) * 2 + 1;
+		// console.log(mouse.x);
 	}
 
 	function getIntersectedObject(){
@@ -82,21 +117,45 @@ var example = (function(){
 
 	function onDocumentMouseDown(event) {
 		var object = getIntersectedObject();
-		if(object && object.onmousedown){
-			object.onmousedown();
+		console.log(object.position);
+		if(mode == PLACE_TURRET){
+			console.log("place turret");
+			var tower = (util.tower(player.color));
+			tower.position.set(object.position.x, object.position.y+.01, object.position.z);
+			scene.add(tower);
+			// send message
 		}
-
-		ring.material.opacity = 1;
-
 	}
 
-	function onDocumentMouseUP(event){
-		ring.material.opacity = 0;
+	function getRandomArbitrary(min, max) {
+	  return Math.random() * (max - min) + min;
 	}
+
+	function getRandomVector(min,max){
+		var vec = new THREE.Vector3(
+			getRandomArbitrary(min, max),
+			0,
+			getRandomArbitrary(min, max)
+		)
+		console.log(vec);
+		return vec;
+	}
+
+	function creepFactory(){
+		console.log("CREEP");
+		var creep = util.creeps(player.color);
+		var rp = getRandomVector(0,1);
+		creep.position.set(rp.x, rp.y, rp.z+1)
+		scene.add(creep);
+	}
+
+	// function onDocumentMouseUP(event){
+	// 	ring.material.opacity = 0;
+	// }
 
 	window.onload = init();
 	window.onmousedown = onDocumentMouseDown;
-	window.onmouseup = onDocumentMouseUP;
+	// window.onmouseup = onDocumentMouseUP;
 	window.onmousemove = onMouseMove;
 
 	return{
