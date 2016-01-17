@@ -9,7 +9,7 @@ function makeAlias(object, name) {
         return fn.apply(object, arguments)
     }
 }
-$ = makeAlias(document, 'getElementById');
+var $ = makeAlias(document, 'getElementById');
 
 
 //-----------We need a GUID to only listen to OUR response
