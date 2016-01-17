@@ -1,6 +1,6 @@
 module.exports = (function(){
 	return {
-		init: function() {
+		main: function() {
 			//---------------These are helpers/globals/etc---------------
 			var socket = io();
 			function makeAlias(object, name) {
