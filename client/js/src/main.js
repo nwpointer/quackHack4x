@@ -52,6 +52,7 @@ var example = (function(){
 
 	window.mode = mode;
 	window.creepsToLauch = 1;
+    window.opponentCreepsToLaunch = 1;
 	window.health = 100;
 
 	window.BottomBar = require('./ui.js');
@@ -133,69 +134,6 @@ var example = (function(){
 		// var delta = clock.getDelta();
 		renderer.render(scene,camera);
 	}
-    
-    //Opponent Enemies
-    function oponentSendCreeps() {
-        //Every 6 to 12 seconds
-        //Send 3 to 12 creeps
-        while(true) { //while opponent has health
-            setTimeout(function() {
-                opponentCreepFactory(getRandomArbitrary(3,12), true)
-            },getRandomArbitrary(6,12));
-        }
-    }
-    
-    function opponentCreepFactory(numCreeps, firstTime) {
-        if(firstTime) {
-            //make noise(s)
-            if (numCreeps === 1) {
-                var sound = new howl.Howl({
-                    urls: ['media/release-single-creep.ogg']
-                }).play();
-            } else if (numCreeps < 5) {
-                var sound = new howl.Howl({
-                    urls: ['media/release-Three-creep.ogg']
-                }).play();
-            } else if (numCreeps > 4) {
-                var sound = new howl.Howl({
-                    urls: ['media/multiple-creepers.ogg']
-                }).play();
-            }
-        }
-        if (numCreeps > 0) {
-			var creep = util.creeps(oponent.color);
-            creep.userData.alive = true;
-			var poz =[4,1];
-            creep.position.set(-1,0,2);
-			oponent.creeps.push(creep);
-			var p = creep.position;
-			scene.add(creep);
-
-			var go = util.combinePath(
-				creep, 
-				function(){
-					return aStar([6-(p.z+3),6-(p.x+3)],[poz[0],poz[1]], terrainCostMap)
-				},
-				function(){
-                    if(creep.userData.alive) {
-                        console.log("reached holy land");
-                        window.health -=1;
-                        //console.log(window.health);
-                        healthbar();
-                        var sound = new howl.Howl({
-                            urls: ['media/death-sound.ogg']
-                        }).play();
-                    }
-				}
-			);
-
-			go.start();
-			numCreeps--;
-            setTimeout(opponentCreepFactory.bind(null,numCreeps,false) ,100);
-		}
-    }
-    
-    
 
 	// EVENTS
 	function onMouseMove(event) {
@@ -320,23 +258,14 @@ var example = (function(){
 	}
 
 	function creepFactory(user){
-		// console.log("asdfasdf", window.creepsToLauch);
-		if (window.creepsToLauch > 0) {
-			
-
+        var numCreeps = window.creepsToLaunch;
+        if (user == oponent) {
+            numCreeps = window.opponentCreepsToLaunch;
+        }
+		if (numCreeps > 0) {
 			var creep = util.creeps(user.color);
             creep.userData.alive = true;
-			// colliderSystem.add(collider)
-			// var rp = getRandomVector(0,1);
-			// creep.position.set(rp.x, rp.y, rp.z+1)
-			
-			
-			
-			
-			// console.log(path);
-
 			if(user == oponent){
-				// console.log("oponent");
 				var poz =[4,1];
 				creep.position.set(-1,0,2);
 			}else{
@@ -356,7 +285,6 @@ var example = (function(){
                     if(creep.userData.alive) {
                         console.log("reached holy land");
                         window.health -=1;
-                        //console.log(window.health);
                         healthbar();
                         var sound = new howl.Howl({
                             urls: ['media/death-sound.ogg']
@@ -366,10 +294,41 @@ var example = (function(){
 			);
 
 			go.start();
-			window.creepsToLauch--;
+            if (user == player) {
+                window.creepsToLauch--;
+            } else {
+                window.opponentCreepsToLaunch--;
+            }
 		}
 		setTimeout(creepFactory.bind(null,user) ,100);
 	}
+    
+    //Opponent Enemies
+    function oponentSendCreeps() {
+        //Every 6 to 12 seconds
+        //Send 3 to 12 creeps
+        opponentCreepFactory(getRandomArbitrary(3,12))
+        setTimeout(oponentSendCreeps, getRandomArbitrary(6,12));
+    }
+    
+    function opponentCreepFactory(numCreeps) {
+        //make noise(s)
+        if (numCreeps === 1) {
+            var sound = new howl.Howl({
+                urls: ['media/release-single-creep.ogg']
+            }).play();
+        } else if (numCreeps < 5) {
+            var sound = new howl.Howl({
+                urls: ['media/release-Three-creep.ogg']
+            }).play();
+        } else if (numCreeps > 4) {
+            var sound = new howl.Howl({
+                urls: ['media/multiple-creepers.ogg']
+            }).play();
+        }
+        window.opponentCreepsToLaunch = numCreeps;
+        creepFactory(oponent);
+    }
 
 
 
