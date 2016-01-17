@@ -154,6 +154,10 @@ var BottomBar = React.createClass({
                 </button>
             </div>
       </div>
+      <div>
+        <input id="inputBox"></input>
+        <button id="sendMessage">Click Me Baby</button>
+      </div>
     );
   }
 });
