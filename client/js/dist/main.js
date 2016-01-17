@@ -369,6 +369,12 @@ window.React = require('react');
 window.ReactDOM = require('react-dom');
 var howl = require('howler');
 
+var bgsound = new howl.Howl({
+    urls: ['media/AHITU.mp3'],
+    autoplay: true,
+    loop: true
+}).play();
+
 var BottomBar = React.createClass({
     displayName: 'BottomBar',
 
