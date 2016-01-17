@@ -11,7 +11,6 @@
 */
 
 
-
 var WindowResize = require('./vendor/threex.windowresize.js');
 var example = (function(){
 	"use strict";
