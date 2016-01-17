@@ -106,7 +106,7 @@ var example = (function(){
 
 		setTimeout(creepFactory.bind(this, player),1000);
 		// console.log("CREEP",player.creeps[0].position)
-		opponentPlaceTurret();
+		opponentPlaceTurret(0);
 		render();
 	}
 
@@ -149,11 +149,12 @@ var example = (function(){
 	function onDocumentMouseDown(event) {
 		var object = getIntersectedObject();
 		// console.log(object.position);
+		console.log("weight", object.userData.terrainCost);
 		if(window.mode == PLACE_TURRET){
 			// console.log("place turret");
 			console.log(object.userData);
 			object.userData.terrainCost = 400;
-			// console.log("weight", object.userData.terrainCost);
+			
 			var tower = (util.tower(player.color));
 			tower.position.set(object.position.x, object.position.y+.01, object.position.z);
 			scene.add(tower);
@@ -163,16 +164,24 @@ var example = (function(){
 		}
 	}
 
-	function opponentPlaceTurret() {
+	function opponentPlaceTurret(numTrts) {
+		numTrts++;
 		var [x,y] = [getRandomArbitrary(0,5), getRandomArbitrary(0,5)];
 		if ((x === 4 && y === 1) || (x === 1 && y === 4)) {
 			opponentPlaceTurret();
 		}
 		var tower = (util.tower(oponent.color));
-		tower.position.set(Math.round(Number(x-2)), .01, Math.round(Number(y-2)));
+		tower.position.set(Math.round(Number(x-2)), .01,  Math.round(Number(y-2)));
 		scene.add(tower);
 		opponentFireTurret(x-2,y-2,0);
-		setTimeout(opponentPlaceTurret, 600);
+		tileMap[Math.round(Number(x))][Math.round(Number(y))].userData.terrainCost = 400;
+
+		console.log(x,y);
+		if(numTrts < 13){
+			setTimeout(function() {
+				opponentPlaceTurret(numTrts);
+			}, 600);
+		}
 	}
 
 	function opponentFireTurret(trtX, trtY, reloadTime) {
@@ -265,7 +274,7 @@ var example = (function(){
 				var poz =[4,1];
 				creep.position.set(-1,0,2);
 			}else{
-				creep.position.set(2,0,0);
+				creep.position.set(2,0,-1);
 				var poz =[1,4];
 			}
 			user.creeps.push(creep);
