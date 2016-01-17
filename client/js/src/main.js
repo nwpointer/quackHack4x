@@ -12,7 +12,7 @@
 
 var WindowResize = require('./vendor/threex.windowresize.js');
 var THREEx = require('./vendor/bower_components/threex.colliders/threex.collider.js');
-
+var howl = require('howler');
 
 var example = (function(){
 	"use strict";
@@ -43,6 +43,7 @@ var example = (function(){
 		player       = {},
 		aStar        = require('./astar.js'),
 		colliderSystem	= new THREEx.ColliderSystem(),
+		healthbar    = require('./ui.js').HealthBar,
 		colliders	= [],
 		terrainCostMap,
 		tileMap
@@ -50,6 +51,7 @@ var example = (function(){
 
 	window.mode = mode;
 	window.creepsToLauch = 1;
+	window.health = 100;
 
 	window.BottomBar = require('./ui.js');
 
@@ -193,6 +195,9 @@ var example = (function(){
 			for (var k = 0; k < player.creeps.length; k++) {
 				//if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] )) {
 				if (Math.abs(player.creeps[k].position.x - trtX) < 1 && Math.abs(player.creeps[k].position.y - trtY) < 1) {
+					var sound = new howl.Howl({
+				    	urls: ['media/turret-shot.ogg']
+				    }).play();
 					scene.remove(player.creeps[k]);
 					if(k != -1) {
 						player.creeps.splice(k, 1);
@@ -229,6 +234,10 @@ var example = (function(){
 				},
 				function(){
 					console.log("reached holy land");
+					window.health -=1;
+					console.log(window.health);
+					healthbar();
+					//Decrease Health here
 				}
 			);
 

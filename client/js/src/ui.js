@@ -9,11 +9,12 @@ var bgsound = new howl.Howl({
 }).play();
 
 var HealthBar = React.createClass({
-  getInitialState: function() {
-    return {
-      numHealth: 100
-    }
-  }
+  render: function() {
+      return(
+        <div className="aParent" style={{width:'100%'}}> 
+          <div id="numHealth" style={{margin:'auto'}}>{this.props.health}</div>
+        </div>
+  )}
 });
 
 var BottomBar = React.createClass({
@@ -100,17 +101,17 @@ var BottomBar = React.createClass({
         creepText: "Charging the Creepers",
         creepDisabled: true
     });
-    if (this.state.creepCount >= 3) {
+    if (this.state.creepCount >= 30) {
       window.creepsToLauch = 10;
         var sound = new howl.Howl({
             urls: ['media/multiple-creepers.ogg']
         }).play();
-    } else if (this.state.creepCount >= 2) {
+    } else if (this.state.creepCount >= 20) {
       window.creepsToLauch = 3;
         var sound = new howl.Howl({
             urls: ['media/release-three-creep.ogg']
         }).play();
-    } else if (this.state.creepCount >= 1) {
+    } else if (this.state.creepCount >= 10) {
       window.creepsToLauch = 1;
         var sound = new howl.Howl({
             urls: ['media/release-single-creep.ogg']
@@ -177,4 +178,16 @@ var BottomBar = React.createClass({
 ReactDOM.render(
   <BottomBar />,
   document.getElementById('container')
+);
+
+module.exports.HealthBar = function(){
+  ReactDOM.render(
+    <HealthBar health={window.health} />,
+    document.getElementById('healthbar')
+  );
+}
+
+ReactDOM.render(
+  <HealthBar health={window.health} />,
+  document.getElementById('healthbar')
 );
