@@ -1,4 +1,5 @@
 var THREE = require('three');
+var TWEEN 		 = require('tween.js');
 module.exports.stdCamera = new THREE.PerspectiveCamera(
 	35, // fov deg
 	window.innerWidth / window.innerHeight,
@@ -7,7 +8,7 @@ module.exports.stdCamera = new THREE.PerspectiveCamera(
 );
 
 module.exports.tile = function(color){
-	return new THREE.Mesh(
+	var tile = new THREE.Mesh(
 		new THREE.BoxGeometry(1, .1, 1),
 		new THREE.MeshPhongMaterial({
 			ambient: 0x555555,
@@ -15,9 +16,11 @@ module.exports.tile = function(color){
 			specular: 0xffffff,
 			shininess: 50,
 			shading: THREE.SmoothShading,
-			name:"cube"
+			name:"cube",
 		})
 	);
+	tile.userData.terrainCost = 0;
+	return tile;
 }
 
 module.exports.tower = function(color){
@@ -52,14 +55,16 @@ module.exports.creeps = function(color){
 }
 
 module.exports.addTerrain = function(terrain, terrainTypes, scene){
-	terrain.map((row,x)=>{
-		row.map((type,y)=>{
+	var tileMap = terrain.map((row,x)=>{
+		return row.map((type,y)=>{
 			var clone = terrainTypes[type].clone();
 			clone.position.x = x -2
 			clone.position.z = y -2
 			scene.add(clone);
+			return clone;
 		})
 	})
+	return tileMap;
 }
 
 module.exports.city = function(color){
@@ -78,6 +83,89 @@ module.exports.city = function(color){
 	);
 
 	return city;
+}
+
+var move = module.exports.move = function(object, direction, distance, then){
+		var position;
+		var target;
+		position = {
+			x:object.position.x,
+			z:object.position.z
+		};
+		switch(direction){
+			case 7:
+				target = {
+					x:object.position.x-distance,
+					z:object.position.z-distance
+				};
+				break;
+			case 2:
+				target = {
+					x:object.position.x+distance,
+					z:object.position.z+distance
+				};
+				break;
+			case 4:
+				target = {
+					x:object.position.x-distance,
+					z:object.position.z+distance
+				};
+				break;
+			case 5:
+				target = {
+					x:object.position.x+distance,
+					z:object.position.z-distance
+				};
+				break;
+			case 6:
+				target = {
+					x:object.position.x-distance,
+				};
+				break;
+			case 3:
+				target = {
+					x:object.position.x+distance,
+				};
+				break;
+			case 8:
+				target = {
+					z:object.position.z-distance
+				};
+				break;
+			case 1:
+				target = {
+					z:object.position.z+distance
+				};
+				break;						
+		}
+
+		var tween = new TWEEN.Tween(position).to(target,1000);
+		tween.onUpdate(function(){
+			object.position.x =position.x;
+			object.position.z =position.z;
+		})
+		// tween.delay(500);
+		// tween.easing(TWEEN.Easing.Elastic.InOut);
+		// tween.start();
+		tween.onComplete(function(){
+			if(then){
+				then();
+			}
+		})
+		return tween;
+}
+
+var combinePath = module.exports.combinePath = function(obj, arr){
+	var dir = arr.pop();
+	if(dir){
+		return move(obj,dir, 1, function(){
+			var n = combinePath(obj, arr);
+			if(n){
+				n.start();
+			}
+		})
+		combinePath(arr);
+	}
 }
 
 

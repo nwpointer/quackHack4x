@@ -1,3 +1,4 @@
 .DS_Store
 server/node_modules/*
+client/js/dist/main.js
 client/node_modules/*
