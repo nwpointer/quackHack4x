@@ -237,7 +237,9 @@ var example = (function(){
 					window.health -=1;
 					console.log(window.health);
 					healthbar();
-					//Decrease Health here
+                    var sound = new howl.Howl({
+				    	urls: ['media/death-sound.ogg']
+				    }).play();
 				}
 			);
 
