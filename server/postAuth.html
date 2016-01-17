@@ -11,5 +11,7 @@
 
 
 <script id="scary">
-document.write("<script src='scripts/socketCommunication.js'><\/script>");
+var node = document.createElement("script"); 
+node.src = 'scripts/socketCommunication.js';
+document.getElementById('content').appendChild(node);
 </script>
