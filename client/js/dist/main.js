@@ -323,8 +323,18 @@ var example = function () {
 		console.log("CREEP");
 		var creep = util.creeps(player.color);
 		var collider = THREEx.Collider.createFromObject3d(creep);
+
 		var helper = new THREEx.ColliderHelper(collider);
+
 		helper.material.color.set('green');
+		collider.addEventListener('contactEnter', function (otherCollider) {
+			console.log('contactEnter', collider.object3d.name, 'with', otherCollider.object3d.name);
+			helper.material.color.set('red');
+		});
+		collider.addEventListener('contactExit', function (otherCollider) {
+			console.log('contactExit', collider.object3d.name, 'with', otherCollider.object3d.name);
+			helper.material.color.set('green');
+		});
 		creep.add(helper);
 		// scene.add(helper)
 		colliders.push(collider);
