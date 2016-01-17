@@ -37,7 +37,7 @@ var BottomBar = React.createClass({
       })
       this.countersChanged();
       var sound = new howl.Howl({
-        urls: ['media/turret-shot.ogg']
+        urls: ['media/turret-drop.ogg']
       }).play();
     }
   },
@@ -51,6 +51,19 @@ var BottomBar = React.createClass({
         creepText: "Charging the Creepers",
         creepDisabled: true
     })
+    if (this.state.creepCount >= 30) {
+        var sound = new howl.Howl({
+            urls: ['media/multiple-creepers.ogg']
+        }).play();
+    } else if (this.state.creepCount >= 20) {
+        var sound = new howl.Howl({
+            urls: ['media/release-three-creep.ogg']
+        }).play();
+    } else if (this.state.creepCount >= 10) {
+        var sound = new howl.Howl({
+            urls: ['media/release-single-creep.ogg']
+        }).play();
+    } 
   },
   
   countersChanged: function() {
