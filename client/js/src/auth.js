@@ -1,4 +1,4 @@
-module.exports = function(){
+module.exports = (function(){
 	return {
 		main: function() {
 			//---------------These are helpers/globals/etc---------------
@@ -107,7 +107,7 @@ module.exports = function(){
 			// };
 		}
 	}
-}
+})()
 
 
 
