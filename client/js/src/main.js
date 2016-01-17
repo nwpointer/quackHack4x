@@ -105,10 +105,21 @@ var example = (function(){
 		// setTimeout(creepFactory.bind(this, player),1000);
 
 		setTimeout(creepFactory.bind(this, player),1000);
+        setTimeout(opponentCreepFactory.bind(this,1, true),1000);
+        oponentSendCreeps();
+        
 		// console.log("CREEP",player.creeps[0].position)
 		opponentPlaceTurret(0);
 		render();
 	}
+    
+    function oponentSendCreeps() {
+        //Every 6 to 12 seconds
+        //Send 3 to 12 creeps
+        while(true) { //while opponent has health
+            setTimeout(opponentCreepFactory.bind(this,getRandomArbitrary(3,12), true),getRandomArbitrary(6,12));
+        }
+    }
 
 	var left  = (n,object)=>{object.position.y+=n*.005; object.position.x+=n*.01;},
 		right = (n,object)=>{object.position.y-=n*.005; object.position.x-=n*.01;},
@@ -252,6 +263,56 @@ var example = (function(){
 			}, 100);
 		}
 	}
+    
+    function opponentCreepFactory(numCreeps, firstTime) {
+        if(firstTime) {
+            //make noise(s)
+            if (numCreeps === 1) {
+                var sound = new howl.Howl({
+                    urls: ['media/release-single-creep.ogg']
+                }).play();
+            } else if (numCreeps < 5) {
+                var sound = new howl.Howl({
+                    urls: ['media/release-Three-creep.ogg']
+                }).play();
+            } else if (numCreeps > 4) {
+                var sound = new howl.Howl({
+                    urls: ['media/multiple-creepers.ogg']
+                }).play();
+            }
+        }
+        if (numCreeps > 0) {
+			var creep = util.creeps(oponent.color);
+            creep.userData.alive = true;
+			var poz =[4,1];
+            creep.position.set(-1,0,2);
+			oponent.creeps.push(creep);
+			var p = creep.position;
+			scene.add(creep);
+
+			var go = util.combinePath(
+				creep, 
+				function(){
+					return aStar([6-(p.z+3),6-(p.x+3)],[poz[0],poz[1]], terrainCostMap)
+				},
+				function(){
+                    if(creep.userData.alive) {
+                        console.log("reached holy land");
+                        window.health -=1;
+                        //console.log(window.health);
+                        healthbar();
+                        var sound = new howl.Howl({
+                            urls: ['media/death-sound.ogg']
+                        }).play();
+                    }
+				}
+			);
+
+			go.start();
+			numCreeps--;
+            setTimeout(opponentCreepFactory.bind(null,numCreeps,false) ,100);
+		}
+    }
 
 	function creepFactory(user){
 		// console.log("asdfasdf", window.creepsToLauch);
