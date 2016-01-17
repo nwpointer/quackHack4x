@@ -360,7 +360,7 @@ var BottomBar = React.createClass({
                 widthThree: 0,
                 widthTwo: 0,
                 widthOne: widthOne + 10,
-                creepText: "Charging eht Creepers",
+                creepText: "Charging the Creepers",
                 creepDisabled: true
             });
         }
@@ -391,11 +391,7 @@ var BottomBar = React.createClass({
                     React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g', id: 'trtbtn' })
                 )
             ),
-            React.createElement(
-                'div',
-                { className: 'chargingbar', width: '1000', height: '1000', style: { background: 'red', display: 'inline-block' } },
-                ' bar '
-            ),
+            React.createElement('div', { className: 'chargingbar', style: { background: 'red', display: 'inline-block', height: "100px", width: "100%" } }),
             React.createElement(
                 'div',
                 { className: 'fire-creep' },
