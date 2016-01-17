@@ -151,6 +151,7 @@ var example = (function(){
 			tower.position.set(object.position.x, object.position.y+.01, object.position.z);
 			scene.add(tower);
 			window.mode = CREEP;
+			fireTurret(object.position.x, object.position.y,0);
 			// send message
 		}
 	}
@@ -167,6 +168,41 @@ var example = (function(){
 		)
 		// console.log(vec);
 		return vec;
+	}
+
+	function fireTurret(trtX, trtY, reloadTime) {
+		console.log("Fired Turret");
+		if (reloadTime > 0) {
+			reloadTime--;
+		} else {
+			scannedList = [];
+			for(i = -1; i < 2; i++) {
+				for(j = -1; j < 2; j++) {
+					//Scan around self
+					if (trtX + i < 0 || trtY + j < 0 || trtX + i > 5 || trtY + j > 5) {
+
+					} else if( i === 0 && k === 0) {
+
+					} else {
+						scannedList.push([trtX+i,trtY+j]);
+					}
+				}
+			}
+			for (k = 0; k < player.creeps.length; k++) {
+				if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] ) {
+					scene.remove(player.creeps[k]);
+					var c = player.creeps.indexOf(player.creeps[k])
+					if(c != -1) {
+						player.creeps.splice(c, 1);
+					}
+					reloadTime = 30;
+					break;
+				}
+			}
+		}
+		setTimeout(function() {
+			this.fireTurret(trtX,trtY,reloadTime);
+		}, 100);
 	}
 
 	function creepFactory(){
