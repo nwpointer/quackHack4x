@@ -180,7 +180,7 @@ var example = (function(){
 		if(numTrts < 13){
 			setTimeout(function() {
 				opponentPlaceTurret(numTrts);
-			}, 600);
+			}, 6000);
 		}
 	}
 
