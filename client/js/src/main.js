@@ -174,7 +174,7 @@ var example = (function(){
 		console.log("Fired Turret");
 		if (reloadTime > 0) {
 			setTimeout(function() {
-				this.fireTurret(trtX, trtY, reloadTime-1);
+				fireTurret(trtX, trtY, reloadTime-1);
 			}, 100);
 		} else {
 			/*scannedList = [];
@@ -192,12 +192,12 @@ var example = (function(){
 			}*/
 			for (var k = 0; k < player.creeps.length; k++) {
 				//if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] )) {
-				if (Math.abs(player.creeps[k].position.x - trtX) < 2 && Math.abs(player.creeps[k].position.y - trtY) < 2) {
+				if (Math.abs(player.creeps[k].position.x - trtX) < 1 && Math.abs(player.creeps[k].position.y - trtY) < 1) {
 					scene.remove(player.creeps[k]);
 					if(k != -1) {
 						player.creeps.splice(k, 1);
 					}
-					reloadTime = 0;
+					reloadTime = 30;
 					break;
 				}
 			}

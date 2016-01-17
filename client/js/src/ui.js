@@ -8,6 +8,14 @@ var bgsound = new howl.Howl({
     loop: true
 }).play();
 
+var HealthBar = React.createClass({
+  getInitialState: function() {
+    return {
+      numHealth: 100
+    }
+  }
+});
+
 var BottomBar = React.createClass({
 	getInitialState: function(){
   	return {
