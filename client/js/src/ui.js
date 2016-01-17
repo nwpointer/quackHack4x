@@ -2,6 +2,12 @@ window.React = require('react');
 window.ReactDOM = require('react-dom');
 var howl = require('howler');
 
+var bgsound = new howl.Howl({
+    urls: ['media/AHITU.mp3'],
+    autoplay: true,
+    loop: true
+}).play();
+
 var BottomBar = React.createClass({
 	getInitialState: function(){
   	return {
@@ -19,7 +25,39 @@ var BottomBar = React.createClass({
   },
   
   componentDidMount: function() {
+    setTimeout(this.incrementChargeBar,100);
   	setTimeout(this.incrementAllCounters,1000);
+  },
+    
+  incrementChargeBar: function() {
+    if (this.state.creepCount >= 30) {
+        this.setState({
+            widthThree: 100,
+            creepText: "10 Creeps Ready to Launch!"
+        })
+    } else if (this.state.creepCount >= 20) {
+        this.setState({
+            widthThree: this.state.widthThree + 1,
+            widthTwo: 100,
+            creepText: "3 Creeps Ready to Launch"
+        })
+    } else if (this.state.creepCount >= 10) {
+        this.setState({
+            widthTwo: this.state.widthTwo + 1,
+            widthOne: 100,
+            creepText: "1 Creep Ready to Launch",
+            creepDisabled: false
+        })
+    } else {
+        this.setState({
+            widthThree: 0,
+            widthTwo: 0,
+            widthOne: this.state.widthOne + 1,
+            creepText: "Charging the Creepers",
+            creepDisabled: true
+        })
+    }
+    setTimeout(this.incrementChargeBar,100);
   },
   
   incrementAllCounters: function (){
@@ -88,61 +126,37 @@ var BottomBar = React.createClass({
             turretImg: "dimturret.png"
       });
     }
-    if (this.state.creepCount >= 30) {
-        this.setState({
-            widthThree: "100%",
-            creepText: "10 Creeps Ready to Launch!"
-        })
-    } else if (this.state.creepCount >= 20) {
-        this.setState({
-            widthThree: this.state.widthThree + 10,
-            widthTwo: 100,
-            creepText: "3 Creeps Ready to Launch"
-        })
-    } else if (this.state.creepCount >= 10) {
-        this.setState({
-            widthTwo: this.state.widthTwo + 10,
-            widthOne: 100,
-            creepText: "1 Creep Ready to Launch",
-            creepDisabled: false
-        })
-    } else {
-        this.setState({
-            widthThree: 0,
-            widthTwo: 0,
-            widthOne: this.state.widthOne + 10,
-            creepText: "Charging the Creepers",
-            creepDisabled: true
-        })
-    }
   },
-  
+
   render: function() {
   	return(
-    	<div> 
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="style.css" />
-        <div className="numcoins">
-            {this.state.numGold} 
-        </div>
+    	<div className="aParent" style={{width:'100%'}}> 
+            <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="style.css" />
         
-        <div className="coins">
-            <img id="coin-img" src="coins.png" alt="Coins" />
-        </div>
+            <div className="left" style={{float:'left', width: '25%', height:'50px'}}>
+                <div className="numcoins" style={{float:'left', width: '25%'}}>
+                    {this.state.numGold} 
+                </div>
+                <div className="coins" style={{float:'left', width: '75%', height: '100%'}}>
+                    <img id="coin-img" src="coins.png" alt="Coins" />
+                </div>
+            </div>
         
-        <div className="turret-bank">
-            <button onClick={this.placeTurret} disabled={this.state.trtDisabled} >
-                <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" />
-            </button>
-        </div>
-        <div className="chargingbarone" style={{background: 'blue', display: 'inline-block', height:"100px", width:this.state.widthOne+"%"}} ></div>
-        <div className="chargingbartwo" style={{background: 'green', display: 'inline-block', height:"100px", width:this.state.widthTwo+"%"}} ></div>
-        <div className="chargingbarthree" style={{background: 'red', display: 'inline-block', height:"100px", width:this.state.widthThree+"%"}} ></div>
-        <div className="fire-creep">
-            <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps}>
-                {this.state.creepText}
-            </button>
-        </div>
+            <div className="totalBar" style={{display: 'inline-block', margin:'0 auto', width:'50%'}}>
+                
+                <div className="fire-creep">
+                    <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps} style={{position: 'relative', width: '100%'}}>
+                        {this.state.creepText}
+                    </button>
+                </div>
+            </div>
+        
+            <div className="turret-bank" style={{float:'right', width:'25%'}}>
+                <button className="trtBtttn" onClick={this.placeTurret} disabled={this.state.trtDisabled} style={{float:'right'}}>
+                    <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" style={{float:'right'}} />
+                </button>
+            </div>
       </div>
     );
   }
