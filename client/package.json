@@ -1,7 +1,7 @@
 {
   "name": "quackhack4x",
-  "version": "0.0.2",
-  "description": "This is an express delivered, socket.io powered, react displayed app",
+  "version": "0.0.1",
+  "description": "oh yeah",
   "main": "js/dist/main.js",
   "scripts": {
     "compiler": "watchify -t [ babelify --presets [ es2015 react stage-0] ] js/src/main.js -o js/dist/main.js"
@@ -18,6 +18,7 @@
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
     "socket.io": "~1.4.4",
+    "three": "^0.73.1",
     "tween.js": "^16.3.4",
     "watchify": "^3.6.1"
   },

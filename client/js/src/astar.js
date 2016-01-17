@@ -91,10 +91,14 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 			} else if (i == 0 && j == 0) {
 				//Where I am now
 			} else if (i == 0 || j == 0) {
-				newCost = 10 + terrain[newLocation[0]][newLocation[1]];
+				if(terrain[newLocation[0]] && terrain[newLocation[0]][newLocation[1]]){
+					newCost = 10 + terrain[newLocation[0]][newLocation[1]];
+				}
 				// console.log("total cost: ", newCost);
 			} else {
-				newCost = 14 + terrain[newLocation[0]][newLocation[1]];
+				if(terrain[newLocation[0]] && terrain[newLocation[0]][newLocation[1]]){
+					newCost = 14 + terrain[newLocation[0]][newLocation[1]];
+				}
 				// console.log("total cost: ", newCost);
 
 			}

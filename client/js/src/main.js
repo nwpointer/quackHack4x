@@ -7,13 +7,12 @@
 	- better events? (hover)
 	- reactive object state?
 	- game state management plan / server commands?
-	- abstract into modules
+	- abstract into modulEs
 */
 
 var WindowResize = require('./vendor/threex.windowresize.js');
 var THREEx = require('./vendor/bower_components/threex.colliders/threex.collider.js');
-var auth = require('./auth.js');
-
+var howl = require('howler');
 
 var example = (function(){
 	"use strict";
@@ -40,19 +39,25 @@ var example = (function(){
 		util         = require('./util.js'),
 		black        = 0x222222,
 		white        = 0xffffff,
-		mode 		 = PLACE_TURRET,
+		mode 		 = CREEP,
 		player       = {},
+		oponent       = {},
 		aStar        = require('./astar.js'),
 		colliderSystem	= new THREEx.ColliderSystem(),
+		healthbar    = require('./ui.js').HealthBar,
 		colliders	= [],
 		terrainCostMap,
 		tileMap
 	;	
 
-	// window.BottomBar = require('./ui.js');
+	window.mode = mode;
+	window.creepsToLauch = 1;
+	window.health = 100;
+	window.myhealth = 100;
+
+	window.BottomBar = require('./ui.js');
 
 	function init () {
-		auth.main();
 		afix(renderer, 'scene');
 		renderer.setClearColor( 0xf0f0f0 );
 		light.position.set(10, 20, 15);
@@ -60,6 +65,7 @@ var example = (function(){
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		player = {color:white, creeps:[]} 
+		oponent = {color:black, creeps:[]} 
 
 		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
 		var terrainMap = [
@@ -75,9 +81,10 @@ var example = (function(){
 		tileMap = util.addTerrain(terrainMap, terrainTypes, scene);
 		// tileMap[4][4].userData.terrainCost = 400;
 
-		var tower = (util.tower(black));
-		tower.position.set(-1,0,1);
-		scene.add(tower);
+		// var tower = (util.tower(black));
+		// tower.position.set(-1,0,1);
+		// scene.add(tower);
+
 
 		var whiteCity = util.city(0xffffff);
 
@@ -96,9 +103,12 @@ var example = (function(){
 		scene.add(light);
 
 		// creepFactory(terrainCostMap);
-		setInterval(creepFactory,1000);
+		// setTimeout(creepFactory.bind(this, player),1000);
+
+		setTimeout(creepFactory.bind(this, player),1000);
+		setTimeout(creepFactory.bind(this, oponent),1000);
 		// console.log("CREEP",player.creeps[0].position)
-		
+		opponentPlaceTurret(0);
 		render();
 	}
 
@@ -113,7 +123,7 @@ var example = (function(){
 		colliderSystem.computeAndNotify(colliders);
 		terrainCostMap = (tileMap.map(x=>{
 			return x.map(y=>{
-				console.log(y.userData.terrainCost);
+				// console.log(y.userData.terrainCost);
 				return y.userData.terrainCost
 			})
 		}))
@@ -140,16 +150,66 @@ var example = (function(){
 
 	function onDocumentMouseDown(event) {
 		var object = getIntersectedObject();
-		console.log(object.position);
-		if(mode == PLACE_TURRET){
+		// console.log(object.position);
+		// console.log("weight", object.userData.terrainCost);
+		if(window.mode == PLACE_TURRET){
 			// console.log("place turret");
-			console.log(object.userData, );
+			console.log(object.userData);
 			object.userData.terrainCost = 400;
-			// console.log("weight", object.userData.terrainCost);
+			
 			var tower = (util.tower(player.color));
 			tower.position.set(object.position.x, object.position.y+.01, object.position.z);
 			scene.add(tower);
+			window.mode = CREEP;
+			fireTurret(object.position.x, object.position.y,0);
 			// send message
+		}
+	}
+
+	function opponentPlaceTurret(numTrts) {
+		numTrts++;
+		var [x,y] = [getRandomArbitrary(0,5), getRandomArbitrary(0,5)];
+		if ((x === 4 && y === 1) || (x === 1 && y === 4)) {
+			opponentPlaceTurret();
+		}
+		var tower = (util.tower(oponent.color));
+		tower.position.set(Math.round(Number(x-2)), .01,  Math.round(Number(y-2)));
+		scene.add(tower);
+		opponentFireTurret(x-2,y-2,0);
+		tileMap[Math.round(Number(x))][Math.round(Number(y))].userData.terrainCost = 400;
+
+		console.log(x,y);
+		if(numTrts < 13){
+			setTimeout(function() {
+				opponentPlaceTurret(numTrts);
+			}, 6000);
+		}
+	}
+
+	function opponentFireTurret(trtX, trtY, reloadTime) {
+		if (reloadTime > 0) {
+			setTimeout(function() {
+				opponentFireTurret(trtX, trtY, reloadTime-1);
+			}, 100);
+		} else {
+			for (var k = 0; k < player.creeps.length; k++) {
+				//if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] )) {
+				if (Math.abs(player.creeps[k].position.x - trtX) < 1 && Math.abs(player.creeps[k].position.y - trtY) < 1) {
+					var sound = new howl.Howl({
+				    	urls: ['media/turret-shot.ogg']
+				    }).play();
+                    player.creeps[k].userData.alive = false;
+					scene.remove(player.creeps[k]);
+					if(k != -1) {
+						player.creeps.splice(k, 1);
+					}
+					reloadTime = 30;
+					break;
+				}
+			}
+			setTimeout(function() {
+				opponentFireTurret(trtX, trtY, reloadTime);
+			}, 100);
 		}
 	}
 
@@ -163,35 +223,119 @@ var example = (function(){
 			0,
 			getRandomArbitrary(min, max)
 		)
-		console.log(vec);
+		// console.log(vec);
 		return vec;
 	}
 
-	function creepFactory(){
-		console.log("CREEP");
-		var creep = util.creeps(player.color);
-
-		// colliderSystem.add(collider)
-		var rp = getRandomVector(0,1);
-		creep.position.set(rp.x, rp.y, rp.z+1)
-		creep.position.set(2,0,0);
-		player.creeps.push(creep);
-		scene.add(creep);
-		var p = creep.position;
-		// console.log(path);
-
-		var go = util.combinePath(
-			creep, 
-			function(){
-				return aStar([6-(p.z+3),6-(p.x+3)],[1,4], terrainCostMap)
-			},
-			function(){
-				console.log("asdfasdfasdfasdf");
+	function fireTurret(trtX, trtY, reloadTime) {
+		//console.log("Fired Turret");
+		if (reloadTime > 0) {
+			setTimeout(function() {
+				fireTurret(trtX, trtY, reloadTime-1);
+			}, 100);
+		} else {
+			for (var k = 0; k < oponent.creeps.length; k++) {
+				//if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] )) {
+				if (Math.abs(oponent.creeps[k].position.x - trtX) < 1 && Math.abs(oponent.creeps[k].position.y - trtY) < 1) {
+					var sound = new howl.Howl({
+				    	urls: ['media/turret-shot.ogg']
+				    }).play();
+                    oponent.creeps[k].userData.alive = false;
+					scene.remove(oponent.creeps[k]);
+					if(k != -1) {
+						oponent.creeps.splice(k, 1);
+					}
+					reloadTime = 30;
+					break;
+				}
 			}
-		);
-
-		go.start();
+			setTimeout(function() {
+				fireTurret(trtX, trtY, reloadTime);
+			}, 100);
+		}
 	}
+
+
+
+	function creepFactory(user){
+		// console.log("asdfasdf", window.creepsToLauch);
+		if (window.creepsToLauch > 0 || user == oponent) {
+			if(user != oponent){
+				window.creepsToLauch--;
+			}
+
+			var creep = util.creeps(user.color);
+            creep.userData.alive = true;
+			// colliderSystem.add(collider)
+			// var rp = getRandomVector(0,1);
+			// creep.position.set(rp.x, rp.y, rp.z+1)
+			
+			
+			
+			
+			// console.log(path);
+
+			if(user == oponent){
+				// console.log("oponent");
+				var poz =[4,1];
+				creep.position.set(-1,0,2);
+			}else{
+				creep.position.set(2,0,-1);
+				var poz =[1,4];
+			}
+			user.creeps.push(creep);
+			var p = creep.position;
+			scene.add(creep);
+
+			var go = util.combinePath(
+				creep, 
+				function(){
+					return aStar([6-(p.z+3),6-(p.x+3)],[poz[0],poz[1]], terrainCostMap)
+				},
+				function(){
+                    if(creep.userData.alive) {
+                        console.log("reached holy land");
+                        if(user != oponent){
+                        	window.health -=1;
+                        	if(window.health <=0){
+                                var sound = new howl.Howl({
+                                    urls: ['media/winning.ogg']
+                                }).play();
+                        		alert('win!');
+                                location.reload();
+                                //Stop everything right before
+                                //AKA pause game
+                        	}
+                        }else{
+                        	window.myhealth -=1;
+                        	if(window.myhealth <=0){
+                                var sound = new howl.Howl({
+                                    urls: ['media/loser.ogg']
+                                }).play();
+                        		alert('lose!');
+                                location.reload();
+                        	}
+                        }
+                        //console.log(window.health);
+                        healthbar();
+                        var sound = new howl.Howl({
+                            urls: ['media/death-sound.ogg']
+                        }).play();
+                    }
+				}
+			);
+
+			go.start();
+			
+		}
+		if(user != oponent){
+			setTimeout(creepFactory.bind(null,user) ,100);
+		}else{
+			setTimeout(creepFactory.bind(null,user) ,getRandomArbitrary(50,900));
+		}
+	}
+
+
 
 
 

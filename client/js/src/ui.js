@@ -8,6 +8,27 @@ var bgsound = new howl.Howl({
     loop: true
 }).play();
 
+var EndOfGame = React.createClass({
+  render: function(){
+    return(
+      <div id="ENDSCREEN">
+        <div className="modal">
+          <h1> you won!</h1>
+        </div>
+      </div>
+    )
+  }
+})
+
+var HealthBar = React.createClass({
+  render: function() {
+      return(
+        <div className="aParent" style={{width:'100%'}}> 
+          <div id="numHealth" style={{margin:'auto'}}>{this.props.health} {this.props.myhealth}</div>
+        </div>
+  )}
+});
+
 var BottomBar = React.createClass({
 	getInitialState: function(){
   	return {
@@ -26,7 +47,7 @@ var BottomBar = React.createClass({
   
   componentDidMount: function() {
     setTimeout(this.incrementChargeBar,100);
-  	setTimeout(this.incrementAllCounters,1000);
+  	setTimeout(this.incrementAllCounters,100);
   },
     
   incrementChargeBar: function() {
@@ -66,11 +87,12 @@ var BottomBar = React.createClass({
         creepCount: this.state.creepCount + 1
     });
     this.countersChanged();
-    setTimeout(this.incrementAllCounters,1000);
+    setTimeout(this.incrementAllCounters,100);
   },
   
   placeTurret: function() {
   	if (this.state.numGold >= 50) {
+      window.mode = "PLACE_TURRET";
       this.setState({
         numGold: this.state.numGold - 50,
         turretReadySoundPlayed: false
@@ -92,14 +114,17 @@ var BottomBar = React.createClass({
         creepDisabled: true
     });
     if (this.state.creepCount >= 30) {
+      window.creepsToLauch = 10;
         var sound = new howl.Howl({
             urls: ['media/multiple-creepers.ogg']
         }).play();
     } else if (this.state.creepCount >= 20) {
+      window.creepsToLauch = 3;
         var sound = new howl.Howl({
             urls: ['media/release-three-creep.ogg']
         }).play();
     } else if (this.state.creepCount >= 10) {
+      window.creepsToLauch = 1;
         var sound = new howl.Howl({
             urls: ['media/release-single-creep.ogg']
         }).play();
@@ -135,7 +160,9 @@ var BottomBar = React.createClass({
             <link rel="stylesheet" type="text/css" href="style.css" />
         
             <div className="left" style={{float:'left', width: '25%', height:'50px'}}>
-                <div className="numcoins" style={{float:'left', width: '25%'}}>{this.state.numGold}</div>
+                <div className="numcoins" style={{float:'left', width: '25%'}}>
+                    {this.state.numGold} 
+                </div>
                 <div className="coins" style={{float:'left', width: '75%', height: '100%'}}>
                     <img id="coin-img" src="coins.png" alt="Coins" />
                 </div>
@@ -144,7 +171,9 @@ var BottomBar = React.createClass({
             <div className="totalBar" style={{display: 'inline-block', margin:'0 auto', width:'50%'}}>
                 
                 <div className="fire-creep">
-                    <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps} style={{position: 'relative', width: '100%'}}>{this.state.creepText}</button>
+                    <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps} style={{position: 'relative', width: '100%'}}>
+                        {this.state.creepText}
+                    </button>
                 </div>
             </div>
         
@@ -161,4 +190,25 @@ var BottomBar = React.createClass({
 ReactDOM.render(
   <BottomBar />,
   document.getElementById('container')
+);
+
+module.exports.HealthBar = function(){
+  ReactDOM.render(
+    <HealthBar health={window.health} myhealth={window.myhealth} />,
+    document.getElementById('healthbar')
+  );
+}
+
+// module.exports.EndOfGame = function(){
+//   ReactDOM.render(
+//     <HealthBar health={window.health}  />,
+//     document.getElementById('modal')
+//   );
+// }
+
+// module.exports.EndOfGame();
+
+ReactDOM.render(
+  <HealthBar health={window.health} />,
+  document.getElementById('healthbar')
 );
