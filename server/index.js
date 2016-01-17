@@ -16,15 +16,15 @@ function addAuthorize(clientId, event) {
   clientMap[clientId] = gameName;
   console.log("Now clientMap looks like this: ", clientMap);
   console.log("Now authMap looks like this: ", authMap);
-  if(authMap.gameName && authMap.gameName >= 2) {
+  if(authMap[gameName] && authMap[gameName] >= 2) {
     console.log("Preventing auth, sending event "+event);
     io.emit(event, false);
     return;
   }
   else {
-    authMap.gameName ? authMap.gameName = 2 : authMap.gameName = 1;
+    authMap[gameName] ? authMap[gameName] = 2 : authMap[gameName] = 1;
     console.log("Allowing auth, sending event "+event);
-    console.log("Number of players: "+authMap.gameName+", Game: "+gameName);
+    console.log("Number of players: "+authMap[gameName]+", Game: "+gameName);
     io.emit(event, true);
     return;
   }
@@ -32,11 +32,11 @@ function addAuthorize(clientId, event) {
 function removeAuthorize(clientId) {
   var gameName = clientMap[clientId];
   console.log("Client: "+clientId+" is removing auth for game "+gameName);
-  if(authMap.gameName && authMap.gameName > 0) {
-    authMap.gameName--;
+  if(authMap[gameName] && authMap[gameName] > 0) {
+    authMap[gameName]--;
   }
-  else if(authMap.gameName && authMap.gameName == 0){
-    delete authMap.gameName;
+  else if(authMap[gameName] && authMap[gameName] == 0){
+    delete authMap[gameName];
   }
   return;
 }
