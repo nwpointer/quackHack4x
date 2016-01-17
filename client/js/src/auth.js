@@ -52,7 +52,7 @@ module.exports = function(){
 			});
 
 			socket.on(gameName + '_chatMessage', function(msg){
-				var ul = $("messages");
+				//var ul = $("messages");
 			});
 
 			socket.on(turretPlacementItem, function(msg){
