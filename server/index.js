@@ -72,7 +72,7 @@ io.on('connection', function(socket){
   });
   socket.on("*",function(event,data) {
       var clientId = this.client.conn.id;
-      if(event.split("_").length > 1) {
+      if(event.split("_").length > 2) {
         addAuthorize(clientId, event);
         return;
       }
