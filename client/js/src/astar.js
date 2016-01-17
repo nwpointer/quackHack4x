@@ -96,7 +96,7 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 				newCost = 14;
 			}
 			//TODO: add terrain cost calcs here.
-			newCost += terrain[newLocation[0]][newLocation[1]];
+			// newCost += terrain[newLocation[0]],[newLocation[1]];
 			if (!inClosedList(newLocation, closedList)) {
 
 				var newNode = PathNode(newLocation, getHeuristic(newLocation, finish), node.cost + newCost, node);

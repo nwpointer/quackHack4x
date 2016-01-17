@@ -12,6 +12,9 @@
 
 
 var WindowResize = require('./vendor/threex.windowresize.js');
+var THREEx = require('./vendor/bower_components/threex.colliders/threex.collider.js');
+
+
 var example = (function(){
 	"use strict";
 	const PLACE_TURRET = "PLACE_TURRET";
@@ -39,7 +42,9 @@ var example = (function(){
 		white        = 0xffffff,
 		mode 		 = PLACE_TURRET,
 		player       = {},
-		aStar        = require('./astar.js')
+		aStar        = require('./astar.js'),
+		colliderSystem	= new THREEx.ColliderSystem(),
+		colliders	= []
 	;	
 
 	// window.BottomBar = require('./ui.js');
@@ -97,10 +102,11 @@ var example = (function(){
 		creepFactory();
 		// setInterval(creepFactory,1000);
 
-		// util.combinePath(
-		// 	player.creeps[0], 
-		// 	aStar([0,0],[0,2],terrainMap)
-		// ).start();
+
+		util.combinePath(
+			player.creeps[0], 
+			aStar([0,0],[0,2],terrainMap)
+		).start();
 		render();
 	}
 
@@ -112,6 +118,7 @@ var example = (function(){
 	function render () {
 		requestAnimationFrame(render);
 		TWEEN.update();
+		colliderSystem.computeAndNotify(colliders)
 		// camera.zoom += .01;
 		// camera.updateProjectionMatrix();
 		// var delta = clock.getDelta();
@@ -162,8 +169,15 @@ var example = (function(){
 	function creepFactory(){
 		console.log("CREEP");
 		var creep = util.creeps(player.color);
-		var rp = getRandomVector(0,1);
-		creep.position.set(rp.x, rp.y, rp.z+1)
+		var collider    = THREEx.Collider.createFromObject3d(creep)
+		var helper	= new THREEx.ColliderHelper(collider)
+		helper.material.color.set('green')
+		scene.add(helper)
+		colliders.push(collider)
+		// colliderSystem.add(collider)
+		// var rp = getRandomVector(0,1);
+		// creep.position.set(rp.x, rp.y, rp.z+1)
+		creep.position.set(3,0,3);
 		player.creeps.push(creep);
 		scene.add(creep);
 	}
