@@ -105,14 +105,21 @@ var example = (function(){
 		// creepFactory(terrainCostMap);
 		// setTimeout(creepFactory.bind(this, player),1000);
 
-		setTimeout(creepFactory.bind(this, player),1000);
+        render();
         
-        setTimeout(opponentCreepFactory.bind(this,1, true),1000);
-        oponentSendCreeps();
-		// console.log("CREEP",player.creeps[0].position)
-		opponentPlaceTurret(0);
-		render();
+		setTimeout(function() {
+            creepFactory(player)
+        },1000);
+        opponentAttack();
 	}
+    
+    function opponentAttack() {
+        setTimeout(function() {
+            creepFactory(oponent)
+        },1000);
+        oponentSendCreeps();
+		opponentPlaceTurret(0);
+    }
 
 	var left  = (n,object)=>{object.position.y+=n*.005; object.position.x+=n*.01;},
 		right = (n,object)=>{object.position.y-=n*.005; object.position.x-=n*.01;},
@@ -127,8 +134,8 @@ var example = (function(){
 			return x.map(y=>{
 				// console.log(y.userData.terrainCost);
 				return y.userData.terrainCost
-			})
-		}))
+			});
+		}));
 		// camera.zoom += .01;
 		// camera.updateProjectionMatrix();
 		// var delta = clock.getDelta();
@@ -300,7 +307,9 @@ var example = (function(){
                 window.opponentCreepsToLaunch--;
             }
 		}
-		setTimeout(creepFactory.bind(null,user) ,100);
+		setTimeout(function() {
+            creepFactory(user) 
+        },100);
 	}
     
     //Opponent Enemies
