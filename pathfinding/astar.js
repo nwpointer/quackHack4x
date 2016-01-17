@@ -104,7 +104,7 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 	}
 }
 
-function aStar(start, finish, terrain) {
+module.exports = function aStar(start, finish, terrain) {
 	var openList = [];
 	var closedList = [];
 	var begin = PathNode(start, getHeuristic(start,finish), 0, null);
