@@ -130,7 +130,6 @@ var BottomBar = React.createClass({
 
   render: function() {
   	return(
-        <div>
     	<div className="aParent" style={{width:'100%'}}> 
             <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
             <link rel="stylesheet" type="text/css" href="style.css" />
@@ -155,11 +154,6 @@ var BottomBar = React.createClass({
                 </button>
             </div>
       </div>
-        <div>What the FUCK
-        <input id="inputBox"></input>
-        <button id="sendMessage">Click Me Baby</button>
-      </div>
-        </div>
     );
   }
 });
