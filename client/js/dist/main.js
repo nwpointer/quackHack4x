@@ -339,7 +339,7 @@ var BottomBar = React.createClass({
         }
         if (this.state.creepCount >= 30) {
             this.setState({
-                widthThree: 100,
+                widthThree: "100%",
                 creepText: "10 Creeps Ready to Launch!"
             });
         } else if (this.state.creepCount >= 20) {
@@ -391,7 +391,7 @@ var BottomBar = React.createClass({
                     React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g', id: 'trtbtn' })
                 )
             ),
-            React.createElement('div', { className: 'chargingbar', style: { background: 'red', display: 'inline-block', height: "100px", width: "100%" } }),
+            React.createElement('div', { className: 'chargingbar', style: { background: 'red', display: 'inline-block', height: "100px", width: this.state.widthOne + "%" } }),
             React.createElement(
                 'div',
                 { className: 'fire-creep' },
