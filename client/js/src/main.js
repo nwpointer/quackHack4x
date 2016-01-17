@@ -12,6 +12,7 @@
 
 var WindowResize = require('./vendor/threex.windowresize.js');
 var THREEx = require('./vendor/bower_components/threex.colliders/threex.collider.js');
+var auth = require('./auth.js');
 
 
 var example = (function(){
@@ -50,6 +51,7 @@ var example = (function(){
 
 
 	function init () {
+		auth.main();
 		afix(renderer, 'scene');
 		renderer.setClearColor( 0xf0f0f0 );
 		light.position.set(10, 20, 15);
