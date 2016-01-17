@@ -388,7 +388,39 @@ var BottomBar = React.createClass({
     },
 
     componentDidMount: function componentDidMount() {
+        setTimeout(this.incrementChargeBar, 100);
         setTimeout(this.incrementAllCounters, 1000);
+    },
+
+    incrementChargeBar: function incrementChargeBar() {
+        if (this.state.creepCount >= 30) {
+            this.setState({
+                widthThree: 100,
+                creepText: "10 Creeps Ready to Launch!"
+            });
+        } else if (this.state.creepCount >= 20) {
+            this.setState({
+                widthThree: this.state.widthThree + 1,
+                widthTwo: 100,
+                creepText: "3 Creeps Ready to Launch"
+            });
+        } else if (this.state.creepCount >= 10) {
+            this.setState({
+                widthTwo: this.state.widthTwo + 1,
+                widthOne: 100,
+                creepText: "1 Creep Ready to Launch",
+                creepDisabled: false
+            });
+        } else {
+            this.setState({
+                widthThree: 0,
+                widthTwo: 0,
+                widthOne: this.state.widthOne + 1,
+                creepText: "Charging the Creepers",
+                creepDisabled: true
+            });
+        }
+        setTimeout(this.incrementChargeBar, 100);
     },
 
     incrementAllCounters: function incrementAllCounters() {
@@ -457,70 +489,51 @@ var BottomBar = React.createClass({
                 turretImg: "dimturret.png"
             });
         }
-        if (this.state.creepCount >= 30) {
-            this.setState({
-                widthThree: "100%",
-                creepText: "10 Creeps Ready to Launch!"
-            });
-        } else if (this.state.creepCount >= 20) {
-            this.setState({
-                widthThree: this.state.widthThree + 10,
-                widthTwo: 100,
-                creepText: "3 Creeps Ready to Launch"
-            });
-        } else if (this.state.creepCount >= 10) {
-            this.setState({
-                widthTwo: this.state.widthTwo + 10,
-                widthOne: 100,
-                creepText: "1 Creep Ready to Launch",
-                creepDisabled: false
-            });
-        } else {
-            this.setState({
-                widthThree: 0,
-                widthTwo: 0,
-                widthOne: this.state.widthOne + 10,
-                creepText: "Charging the Creepers",
-                creepDisabled: true
-            });
-        }
     },
 
     render: function render() {
         return React.createElement(
             'div',
-            null,
+            { className: 'aParent', style: { width: '100%' } },
             React.createElement('link', { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' }),
             React.createElement('link', { rel: 'stylesheet', type: 'text/css', href: 'style.css' }),
             React.createElement(
                 'div',
-                { className: 'numcoins' },
-                this.state.numGold
+                { className: 'left', style: { float: 'left', width: '25%', height: '100px' } },
+                React.createElement(
+                    'div',
+                    { className: 'numcoins', style: { float: 'left', width: '25%' } },
+                    this.state.numGold
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'coins', style: { float: 'left', width: '75%', height: 'auto' } },
+                    React.createElement('img', { id: 'coin-img', src: 'coins.png', alt: 'Coins' })
+                )
             ),
             React.createElement(
                 'div',
-                { className: 'coins' },
-                React.createElement('img', { id: 'coin-img', src: 'coins.png', alt: 'Coins' })
+                { className: 'totalBar', style: { display: 'inline-block', margin: '0 auto', width: '50%' } },
+                React.createElement('div', { className: 'chargingbarone', style: { background: 'pink', display: 'inline-block', height: "34px", width: this.state.widthOne + "%", position: 'absolute' } }),
+                React.createElement('div', { className: 'chargingbartwo', style: { background: 'orange', display: 'inline-block', height: "34px", width: this.state.widthTwo + "%", position: 'absolute' } }),
+                React.createElement('div', { className: 'chargingbarthree', style: { background: 'red', display: 'inline-block', height: "34px", width: this.state.widthThree + "%", position: 'absolute' } }),
+                React.createElement(
+                    'div',
+                    { className: 'fire-creep' },
+                    React.createElement(
+                        'button',
+                        { disabled: this.state.creepDisabled, id: 'firebtn', type: 'button', className: 'btn btn-default', onClick: this.launchCreeps, style: { position: 'relative', width: '100%' } },
+                        this.state.creepText
+                    )
+                )
             ),
             React.createElement(
                 'div',
-                { className: 'turret-bank' },
+                { className: 'turret-bank', style: { float: 'right', width: '25%' } },
                 React.createElement(
                     'button',
                     { onClick: this.placeTurret, disabled: this.state.trtDisabled },
                     React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g', id: 'trtbtn' })
-                )
-            ),
-            React.createElement('div', { className: 'chargingbarone', style: { background: 'blue', display: 'inline-block', height: "100px", width: this.state.widthOne + "%" } }),
-            React.createElement('div', { className: 'chargingbartwo', style: { background: 'green', display: 'inline-block', height: "100px", width: this.state.widthTwo + "%" } }),
-            React.createElement('div', { className: 'chargingbarthree', style: { background: 'red', display: 'inline-block', height: "100px", width: this.state.widthThree + "%" } }),
-            React.createElement(
-                'div',
-                { className: 'fire-creep' },
-                React.createElement(
-                    'button',
-                    { disabled: this.state.creepDisabled, id: 'firebtn', type: 'button', className: 'btn btn-default', onClick: this.launchCreeps },
-                    this.state.creepText
                 )
             )
         );
