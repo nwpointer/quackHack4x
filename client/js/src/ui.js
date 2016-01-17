@@ -8,6 +8,18 @@ var bgsound = new howl.Howl({
     loop: true
 }).play();
 
+var EndOfGame = React.createClass({
+  render: function(){
+    return(
+      <div id="ENDSCREEN">
+        <div className="modal">
+          <h1> you won!</h1>
+        </div>
+      </div>
+    )
+  }
+})
+
 var HealthBar = React.createClass({
   render: function() {
       return(
@@ -186,6 +198,15 @@ module.exports.HealthBar = function(){
     document.getElementById('healthbar')
   );
 }
+
+module.exports.EndOfGame = function(){
+  ReactDOM.render(
+    <HealthBar health={window.health} />,
+    document.getElementById('modal')
+  );
+}
+
+module.exports.EndOfGame();
 
 ReactDOM.render(
   <HealthBar health={window.health} />,
