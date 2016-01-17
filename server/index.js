@@ -12,6 +12,9 @@ function addAuthorize(clientId, event) {
   console.log("Client: "+clientId+" is requesting auth.");
   var guid = event.split("_")[0];
   var gameName = event.split("_")[1];
+
+  console.log("We've split the event");
+
   event = guid + '_auth';
   clientMap[clientId] = gameName;
   console.log("Now clientMap looks like this: ", clientMap);
@@ -29,9 +32,8 @@ function addAuthorize(clientId, event) {
   }
 }
 function removeAuthorize(clientId) {
-  console.log("Client: "+clientId+" is requesting auth.");
   var gameName = clientMap[clientId];
-  clientMap[clientId] = gameName;
+  console.log("Client: "+clientId+" is removing auth for game "+gameName);
   if(authMap.gameName && authMap.gameName > 0) {
     authMap.gameName--;
   }
@@ -48,6 +50,7 @@ app.get('/', function(req, res){
 });
 
 app.get('*', function(req, res){
+  var request = req.url.split('/');
   res.sendFile(__dirname +"/"+ request[request.length - 1]);
 });
 
