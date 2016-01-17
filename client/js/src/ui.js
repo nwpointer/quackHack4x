@@ -1,5 +1,6 @@
 window.React = require('react');
 window.ReactDOM = require('react-dom');
+var howl = require('howler');
 
 var BottomBar = React.createClass({
 	getInitialState: function(){
@@ -12,7 +13,8 @@ var BottomBar = React.createClass({
       turretImg: "turret.png",
       widthOne: 0,
       widthTwo: 0,
-      widthThree: 0
+      widthThree: 0,
+      turretReadySoundPlayed: true
     }
   },
   
@@ -32,9 +34,13 @@ var BottomBar = React.createClass({
   placeTurret: function() {
   	if (this.state.numGold >= 50) {
       this.setState({
-        numGold: this.state.numGold - 50
+        numGold: this.state.numGold - 50,
+        turretReadySoundPlayed: false
       })
       this.countersChanged();
+      var sound = new howl.Howl({
+        urls: ['media/turret-drop.ogg']
+      }).play();
     }
   },
     
@@ -46,7 +52,20 @@ var BottomBar = React.createClass({
         widthOne: 0,
         creepText: "Charging the Creepers",
         creepDisabled: true
-    })
+    });
+    if (this.state.creepCount >= 30) {
+        var sound = new howl.Howl({
+            urls: ['media/multiple-creepers.ogg']
+        }).play();
+    } else if (this.state.creepCount >= 20) {
+        var sound = new howl.Howl({
+            urls: ['media/release-three-creep.ogg']
+        }).play();
+    } else if (this.state.creepCount >= 10) {
+        var sound = new howl.Howl({
+            urls: ['media/release-single-creep.ogg']
+        }).play();
+    } 
   },
   
   countersChanged: function() {
@@ -55,6 +74,14 @@ var BottomBar = React.createClass({
     		trtDisabled: false,
             turretImg: "turret.png"
       });
+      if (!this.state.turretReadySoundPlayed) {
+          var sound = new howl.Howl({
+                urls: ['media/turret-ready.ogg']
+          }).play();
+          this.setState({
+              turretReadySoundPlayed: true
+          });
+      }
     } else {
 	    this.setState({
     		trtDisabled: true,
@@ -68,13 +95,13 @@ var BottomBar = React.createClass({
         })
     } else if (this.state.creepCount >= 20) {
         this.setState({
-            widthThree: widthThree + 10,
+            widthThree: this.state.widthThree + 10,
             widthTwo: 100,
             creepText: "3 Creeps Ready to Launch"
         })
     } else if (this.state.creepCount >= 10) {
         this.setState({
-            widthTwo: widthTwo + 10,
+            widthTwo: this.state.widthTwo + 10,
             widthOne: 100,
             creepText: "1 Creep Ready to Launch",
             creepDisabled: false
@@ -83,7 +110,7 @@ var BottomBar = React.createClass({
         this.setState({
             widthThree: 0,
             widthTwo: 0,
-            widthOne: widthOne + 10,
+            widthOne: this.state.widthOne + 10,
             creepText: "Charging the Creepers",
             creepDisabled: true
         })
@@ -108,7 +135,9 @@ var BottomBar = React.createClass({
                 <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" />
             </button>
         </div>
-        <div className="chargingbar" style={{background: 'red', display: 'inline-block', height:"100px", width:this.state.widthOne+"%"}} ></div>
+        <div className="chargingbarone" style={{background: 'blue', display: 'inline-block', height:"100px", width:this.state.widthOne+"%"}} ></div>
+        <div className="chargingbartwo" style={{background: 'green', display: 'inline-block', height:"100px", width:this.state.widthTwo+"%"}} ></div>
+        <div className="chargingbarthree" style={{background: 'red', display: 'inline-block', height:"100px", width:this.state.widthThree+"%"}} ></div>
         <div className="fire-creep">
             <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps}>
                 {this.state.creepText}

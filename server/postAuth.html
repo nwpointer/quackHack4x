@@ -10,4 +10,8 @@
 <button id="hit">This button counts as a 'hit'</button>
 
 
-<script src="scripts/socketCommunication.js"></script>
+<script id="scary">
+var node = document.createElement("script"); 
+node.src = 'scripts/socketCommunication.js';
+document.getElementById('content').appendChild(node);
+</script>
