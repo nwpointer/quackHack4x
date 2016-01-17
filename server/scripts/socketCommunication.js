@@ -33,7 +33,7 @@ socket.on(creeperLocationsItem, function(msg){
 //--------------Socket Output--------------------
 
 function sendMessage(item, message) {
-	console.log("Sending message: "+item)
+	console.log("Sending message: "+item);
 	socket.emit(item, message);
 	return;
 }
@@ -66,7 +66,6 @@ $("#canvas").on("click", validateTurretPlacement);
 //------------Hit Code---------------------------------
 
 function sendHit() {
-    console.log("Sending message");
     sendMessage(hitItem, "true");
 }
 
@@ -98,10 +97,9 @@ function sendCreeperArray() {
     	creeperLocations.push(creeperLocationGenerator());
     }
 
-    console.log("The creepers are moving!");
     sendMessage(creeperLocationsItem, JSON.stringify(creeperLocations));
 }
-window.setInterval(sendCreeperArray, 5000);
+//setInterval(sendCreeperArray, 5000);
 
 
 

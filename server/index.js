@@ -12,12 +12,10 @@ function addAuthorize(clientId, event) {
   console.log("Client: "+clientId+" is requesting auth.");
   var guid = event.split("_")[0];
   var gameName = event.split("_")[1];
-
-  console.log("We've split the event");
-
   event = guid + '_auth';
   clientMap[clientId] = gameName;
   console.log("Now clientMap looks like this: ", clientMap);
+  console.log("Now authMap looks like this: ", authMap);
   if(authMap.gameName && authMap.gameName >= 2) {
     console.log("Preventing auth, sending event "+event);
     io.emit(event, false);
