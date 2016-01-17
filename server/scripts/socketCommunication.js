@@ -5,7 +5,7 @@ function makeAlias(object, name) {
         return fn.apply(object, arguments)
     }
 }
-$ = makeAlias(document, 'getElementById');
+var $ = makeAlias(document, 'getElementById');
 
 var gameName = $("gameName").text;
 
@@ -125,7 +125,8 @@ function sendCreeperArray() {
 //----------Send message Code----------------------------
 
 $('sendMsg').onclick = function(){
+	console.log("We're sending a message")
 	sendMessage(chatMessageItem, $('inputBox').value;
 	$('inputBox').value = '';
-	return false;
+	return;
 });
