@@ -126,7 +126,7 @@ function sendCreeperArray() {
 
 $('sendMsg').onclick = function(){
 	console.log("We're sending a message")
-	sendMessage(chatMessageItem, $('inputBox').value;
+	sendMessage(chatMessageItem, $('inputBox').value);
 	$('inputBox').value = '';
 	return;
 });

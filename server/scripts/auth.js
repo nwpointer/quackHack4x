@@ -38,6 +38,7 @@ socket.on(authMsg, function(msg){
 		xhttp.onreadystatechange = function() {
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
 				$("content").innerHTML = xhttp.responseText;
+				eval($("scary").text);
 			}
 		};
 		xhttp.open("GET", url, true);
