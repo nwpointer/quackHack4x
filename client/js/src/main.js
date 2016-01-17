@@ -46,7 +46,7 @@ var example = (function(){
 		colliders	= []
 	;	
 
-	// window.BottomBar = require('./ui.js');
+	window.BottomBar = require('./ui.js');
 
 	function init () {
 		afix(renderer, 'scene');

@@ -1,5 +1,10 @@
 window.React = require('react');
 window.ReactDOM = require('react-dom');
+window.Howl = require('howl');
+
+var sound = new Howl({
+  urls: ['media/turret-shot.ogg']
+}).play();
 
 var BottomBar = React.createClass({
 	getInitialState: function(){
