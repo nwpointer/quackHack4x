@@ -16,11 +16,9 @@ function getHeuristic(newLocation, finish) {
 }
 
 function inClosedList(newLocation, closedList) {
-	// console.log("location is: ", newLocation);
 	for (var i = 0; i < closedList.length; i++) {
 		if (newLocation[0] == closedList[i].location[0]) {
 			if (newLocation[1] == closedList[i].location[1]) {
-				console.log(newLocation," is in the closed list.");
 				return true;
 			}
 		}
@@ -80,8 +78,8 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 		return;
 	}
 	
-	for (i = -1; i < 2; i++) {
-		for (j = -1; j < 2; j++) {
+	for (var i = -1; i < 2; i++) {
+		for (var j = -1; j < 2; j++) {
 			var newCost = 99999;
 			newLocation = [(X+i),(Y+j)];
 			if (newLocation[0] < 0 || newLocation[0] > MAPSIZE || newLocation[1] < 0 || newLocation[1] > MAPSIZE) {
@@ -91,14 +89,12 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 			} else if (i == 0 && j == 0) {
 				//Where I am now
 			} else if (i == 0 || j == 0) {
-				newCost = 10;
+				newCost = 10 + terrain[newLocation[0]][newLocation[1]];
 			} else {
-				newCost = 14;
+				newCost = 14 + terrain[newLocation[0]][newLocation[1]];
 			}
 			//TODO: add terrain cost calcs here.
-			newCost += terrain[newLocation[0]][newLocation[1]];
 			if (!inClosedList(newLocation, closedList)) {
-
 				var newNode = PathNode(newLocation, getHeuristic(newLocation, finish), node.cost + newCost, node);
 				openList.push(newNode);
 				openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
@@ -116,8 +112,8 @@ function aStar(start, finish, terrain) {
 
 	while(openList.length > 0) {
 		var temp = openList.shift();
+		console.log("Looking at: ", temp);
 		openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
-		// if (temp[0].location[0] == finish[0] && temp[0].location[1] == finish[1]) {
 			if (temp.heuristic == 0) {
 			//follow parent links back to start, generate breadcrumbs
 			return createPath(temp, start);
@@ -130,8 +126,16 @@ function aStar(start, finish, terrain) {
 }
 
 function main() {
+	var grid = [];
+	for (var i = 0; i <= MAPSIZE; i++) {
+		grid[i] = [];
+		for (var j = 0; j <= MAPSIZE; j++) {
+			grid[i][j] = 1;
+		}
+	}
+
 	console.log("Let's run A*");
-	var list = aStar([0,0],[0,10]);
+	var list = aStar([2,9],[6,0],grid);
 	console.log("the path is: ",list);
 }
 main();
