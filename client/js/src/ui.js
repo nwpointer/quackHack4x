@@ -8,10 +8,6 @@ var bgsound = new howl.Howl({
     loop: true
 }).play();
 
-var sound = new howl.Howl({
-				    	urls: ['media/death-sound.ogg']
-				    }).play();
-
 var HealthBar = React.createClass({
   render: function() {
       return(
