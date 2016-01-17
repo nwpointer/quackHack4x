@@ -129,4 +129,4 @@ $('sendMsg').onclick = function(){
 	sendMessage(chatMessageItem, $('inputBox').value);
 	$('inputBox').value = '';
 	return;
-});
+};
