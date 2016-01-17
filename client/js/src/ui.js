@@ -63,7 +63,7 @@ var BottomBar = React.createClass({
     }
     if (this.state.creepCount >= 30) {
         this.setState({
-            widthThree: 100,
+            widthThree: "100%",
             creepText: "10 Creeps Ready to Launch!"
         })
     } else if (this.state.creepCount >= 20) {
@@ -84,7 +84,7 @@ var BottomBar = React.createClass({
             widthThree: 0,
             widthTwo: 0,
             widthOne: widthOne + 10,
-            creepText: "Charging eht Creepers",
+            creepText: "Charging the Creepers",
             creepDisabled: true
         })
     }
@@ -108,7 +108,7 @@ var BottomBar = React.createClass({
                 <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" />
             </button>
         </div>
-        <div className="chargingbar" width="1000" height="1000" style={{background: 'red', display: 'inline-block'}} > bar </div>
+        <div className="chargingbar" style={{background: 'red', display: 'inline-block', height:"100px", width:this.state.widthOne+"%"}} ></div>
         <div className="fire-creep">
             <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps}>
                 {this.state.creepText}

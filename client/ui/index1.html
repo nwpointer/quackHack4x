@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> NAME </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+  </head>
+    <!-- <script src="ui.js"></script> -->
+  <body>
+    <div class="healthbar">
+      <div class="enemy-health col-2">
+        Enemy Health
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+          70%
+        </div>
+      </div> <!-- end enemy-health -->
+
+      <div class="personal-health col-2">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+          70%
+        </div>
+        Personal Health
+      </div> <!-- end div personal-health -->
+    </div> <!-- end div healthbar -->
+    <div class="gamecanvas">
+      <img id="coin-img" src="coins.png" alt="Coins" style="width:500px;height:400px;">
+    </div> <!-- end div gamecanvas -->
+    <div class="toolbar">
+      <div class="coins col-4">
+        <img id="coin-img" src="coins.png" alt="Coins" style="width:50px;height:40px;">
+      </div>
+
+      <div class="fire-creep col-2">
+        <button id="firebtn" type="button" class="btn btn-default"> FIRE </button>
+      </div>
+
+      <div class="turret-bank col-4">
+        <img id="turret-img" src="turret.png" alt="Turret" style="width:50px;height:40px;">
+      </div>
+    </div> <!-- end fiv toolbar -->
+
+  </body>
+</html>

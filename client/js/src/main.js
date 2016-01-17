@@ -10,7 +10,6 @@
 	- abstract into modules
 */
 
-
 var WindowResize = require('./vendor/threex.windowresize.js');
 var THREEx = require('./vendor/bower_components/threex.colliders/threex.collider.js');
 

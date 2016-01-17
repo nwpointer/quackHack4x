@@ -15,28 +15,28 @@ function addAuthorize(clientId, event) {
   event = guid + '_auth';
   clientMap[clientId] = gameName;
   console.log("Now clientMap looks like this: ", clientMap);
-  if(authMap.gameName && authMap.gameName >= 2) {
+  console.log("Now authMap looks like this: ", authMap);
+  if(authMap[gameName] && authMap[gameName] >= 2) {
     console.log("Preventing auth, sending event "+event);
     io.emit(event, false);
     return;
   }
   else {
-    authMap.gameName ? authMap.gameName = 2 : authMap.gameName = 1;
+    authMap[gameName] ? authMap[gameName] = 2 : authMap[gameName] = 1;
     console.log("Allowing auth, sending event "+event);
-    console.log("Number of players: "+authMap.gameName+", Game: "+gameName);
+    console.log("Number of players: "+authMap[gameName]+", Game: "+gameName);
     io.emit(event, true);
     return;
   }
 }
 function removeAuthorize(clientId) {
-  console.log("Client: "+clientId+" is requesting auth.");
   var gameName = clientMap[clientId];
-  clientMap[clientId] = gameName;
-  if(authMap.gameName && authMap.gameName > 0) {
-    authMap.gameName--;
+  console.log("Client: "+clientId+" is removing auth for game "+gameName);
+  if(authMap[gameName] && authMap[gameName] > 0) {
+    authMap[gameName]--;
   }
-  else if(authMap.gameName && authMap.gameName == 0){
-    delete authMap.gameName;
+  else if(authMap[gameName] && authMap[gameName] == 0){
+    delete authMap[gameName];
   }
   return;
 }
@@ -45,10 +45,6 @@ app.use(express.static(__dirname + '/'));
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
-});
-
-app.get('*', function(req, res){
-  res.sendFile(__dirname +"/"+ request[request.length - 1]);
 });
 
 io.on('connection', function(socket){
@@ -74,7 +70,7 @@ io.on('connection', function(socket){
   });
   socket.on("*",function(event,data) {
       var clientId = this.client.conn.id;
-      if(event.split("_").length > 1) {
+      if(event.split("_").length > 2) {
         addAuthorize(clientId, event);
         return;
       }

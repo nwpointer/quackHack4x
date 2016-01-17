@@ -1,5 +1,16 @@
 var socket = io();
 
+var url = "postAuth.html";
+
+function makeAlias(object, name) {
+    var fn = object ? object[name] : null;
+    if (typeof fn == 'undefined') return function () {}
+    return function () {
+        return fn.apply(object, arguments)
+    }
+}
+$ = makeAlias(document, 'getElementById');
+
 
 //-----------We need a GUID to only listen to OUR response
 
@@ -21,20 +32,27 @@ var authMsg = uuid+'_auth';
 socket.on(authMsg, function(msg){
 	console.log("Got an authMsg back with msg: "+msg);
 	if(msg) {
-		$("#authResult").html("Approved.");
-		var gameName = $('#inputBox').val();
-		window.location.replace("/postAuth.html?"+gameName);
+		$("authResult").innerHTML = "Approved.";
+		$("gameName").text = $('inputBox').value;
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				$("content").innerHTML = xhttp.responseText;
+			}
+		};
+		xhttp.open("GET", url, true);
+		xhttp.send();
 	}
 	else {
-		$("#authResult").html("Sorry, that game is full.");
+		$("authResult").innerHTML = "Sorry, that game is full.";
 	}
 });
 
 
 //----------Send message Code----------------------------
 
-$('#getAuth').on("click", function(){
-	var gameName = $('#inputBox').val();
+$('getAuth').onclick = function(){
+	var gameName = $('inputBox').value;
 	socket.emit(uuid + '_' + gameName +'_auth', 'true');
-	return false;
-});
+	return;
+};

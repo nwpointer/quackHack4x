@@ -1,29 +1,61 @@
-var socket = io();
+function makeAlias(object, name) {
+    var fn = object ? object[name] : null;
+    if (typeof fn == 'undefined') return function () {}
+    return function () {
+        return fn.apply(object, arguments)
+    }
+}
+$ = makeAlias(document, 'getElementById');
 
-$("#header").text(window.location.search.replace("?", ""));
+var gameName = $("gameName").text;
+
+var chatMessageItem = gameName + "_chatMessage";
+var turretPlacementItem = gameName + "_turretPlacement";
+var hitItem = gameName + "_hit";
+var creeperLocationsItem = gameName + "_creeperLocations";
+
 
 
 //-------------Socket listeners---------------
 
-socket.on('chat message', function(msg){
-	$('#messages').append($('<li>').text(msg));
+socket.on(gameName + '_chatMessage', function(msg){
+	var ul = $("messages");
+	var li = document.createElement("li");
+	li.appendChild(document.innerHTML(msg));
+	ul.appendChild(li);
 });
 
-socket.on('turretPlacement', function(msg){
+socket.on(turretPlacementItem, function(msg){
 	console.log("We got a turretPlacement " + JSON.parse(msg));
 	msg = '<b>Turret placement:</b> ' + msg;
-	$('#messages').append($('<li>').html(msg));
+	var ul = $("messages");
+	var li = document.createElement("li");
+	li.appendChild(document.innerHTML(msg));
+	ul.appendChild(li);
 });
 
-socket.on('hit', function(msg){
+socket.on(hitItem, function(msg){
 	console.log("We got a hit ");
-	$('#messages').append($('<li>').html('<b>Someone was hit:</b>'));
+	msg = '<b>Someone was hit:</b>';
+	var ul = $("messages");
+	var li = document.createElement("li");
+	li.appendChild(document.innerHTML(msg));
+	ul.appendChild(li);
 });
 
-socket.on('creeperLocations', function(msg){
-	$('#messages').append($('<li>').text(msg));
+socket.on(creeperLocationsItem, function(msg){
+	console.log("Creepers: "+msg);
+	//$('#messages').append($('<li>').text(msg));
 });
 
+
+//--------------Socket Output--------------------
+
+function sendMessage(item, message) {
+	console.log("Sending message: "+item);
+	socket.emit(item, message);
+	return;
+}
 
 
 //------------Turret Placement Code------------------
@@ -44,22 +76,19 @@ function sendTurretPlacement(e) {
 	}
 
 	var turretPlacementString = JSON.stringify(turret);
-
-    console.log("Sending turret coords at " + turretPlacementString);
-    socket.emit('turretPlacement', turretPlacementString);
+    sendMessage(turretPlacementItem, turretPlacementString);
 }
 
-$("#canvas").on("click", validateTurretPlacement);
+$("canvas").onclick = validateTurretPlacement;
 
 
 //------------Hit Code---------------------------------
 
 function sendHit() {
-    console.log("I hit you!");
-    socket.emit('hit', "true");
+    sendMessage(hitItem, "true");
 }
 
-$("#hit").on("click", sendHit);
+$("hit").onclick = sendHit;
 
 
 //------------Creeper Code---------------------------------
@@ -72,28 +101,31 @@ ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
 ctx.fillRect(20,20,5,5);
 
 function creeperLocationGenerator() {
-	return;
+	return {
+		X: Math.random()*300,
+		Y: Math.random()*300
+	};
 }
 
 function sendCreeperArray() {
-    
     var numOfCreepers = 5;
+    var creeperLocations = [];
 
+    for(var i=0; i<numOfCreepers; i++)
+    {
+    	creeperLocations.push(creeperLocationGenerator());
+    }
 
-    console.log("The creepers are moving!");
-
-
-    //socket.emit('creeperLocations', "true");
+    sendMessage(creeperLocationsItem, JSON.stringify(creeperLocations));
 }
-
-//$("#hit").on("click", sendCreeperArray);
+//setInterval(sendCreeperArray, 5000);
 
 
 
 //----------Send message Code----------------------------
 
-$('#sendMsg').on("click", function(){
-	socket.emit('chat message', $('#inputBox').val());
-	$('#inputBox').val('');
+$('sendMsg').onclick = function(){
+	sendMessage(chatMessageItem, $('inputBox').value;
+	$('inputBox').value = '';
 	return false;
 });
