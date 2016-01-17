@@ -121,26 +121,24 @@ var BottomBar = React.createClass({
       });
     }
   },
-  
+
   render: function() {
   	return(
     	<div className="aParent" style={{width:'100%'}}> 
             <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
             <link rel="stylesheet" type="text/css" href="style.css" />
         
-            <div className="left" style={{float:'left', width: '25%', height:'100px'}}>
+            <div className="left" style={{float:'left', width: '25%', height:'50px'}}>
                 <div className="numcoins" style={{float:'left', width: '25%'}}>
                     {this.state.numGold} 
                 </div>
-                <div className="coins" style={{float:'left', width: '75%', height: 'auto'}}>
+                <div className="coins" style={{float:'left', width: '75%', height: '100%'}}>
                     <img id="coin-img" src="coins.png" alt="Coins" />
                 </div>
             </div>
         
             <div className="totalBar" style={{display: 'inline-block', margin:'0 auto', width:'50%'}}>
-                <div className="chargingbarone" style={{background: 'pink', display: 'inline-block', height:"34px", width:this.state.widthOne+"%", position: 'absolute'}} ></div>
-                <div className="chargingbartwo" style={{background: 'orange', display: 'inline-block', height:"34px", width:this.state.widthTwo+"%", position: 'absolute'}} ></div>
-                <div className="chargingbarthree" style={{background: 'red', display: 'inline-block', height:"34px", width:this.state.widthThree+"%", position: 'absolute'}} ></div>
+                
                 <div className="fire-creep">
                     <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps} style={{position: 'relative', width: '100%'}}>
                         {this.state.creepText}
@@ -149,8 +147,8 @@ var BottomBar = React.createClass({
             </div>
         
             <div className="turret-bank" style={{float:'right', width:'25%'}}>
-                <button onClick={this.placeTurret} disabled={this.state.trtDisabled} >
-                    <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" />
+                <button onClick={this.placeTurret} disabled={this.state.trtDisabled} style={{float:'right'}}>
+                    <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" style={{float:'right'}} />
                 </button>
             </div>
       </div>
