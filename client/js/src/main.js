@@ -169,7 +169,7 @@ var example = (function(){
 			opponentPlaceTurret();
 		}
 		var tower = (util.tower(oponent.color));
-		tower.position.set(x-2, .01, y-2);
+		tower.position.set(Math.round(Number(x-2)), .01, Math.round(Number(y-2)));
 		scene.add(tower);
 		opponentFireTurret(x-2,y-2,0);
 		setTimeout(opponentPlaceTurret, 600);
