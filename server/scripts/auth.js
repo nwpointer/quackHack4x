@@ -21,10 +21,12 @@ var authMsg = uuid+'_auth';
 socket.on(authMsg, function(msg){
 	console.log("Got an authMsg back with msg: "+msg);
 	if(msg) {
-		console.log("Approved.");
+		$("#authResult").html("Approved.");
+		var gameName = $('#inputBox').val();
+		window.location.replace("/postAuth.html?"+gameName);
 	}
 	else {
-		console.log("BANNED");
+		$("#authResult").html("Sorry, that game is full.");
 	}
 });
 
@@ -34,6 +36,5 @@ socket.on(authMsg, function(msg){
 $('#getAuth').on("click", function(){
 	var gameName = $('#inputBox').val();
 	socket.emit(uuid + '_' + gameName +'_auth', 'true');
-	$('#inputBox').val('');
 	return false;
 });

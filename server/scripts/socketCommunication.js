@@ -1,5 +1,7 @@
 var socket = io();
 
+$("#header").text(window.location.search.replace("?", ""));
+
 
 //-------------Socket listeners---------------
 

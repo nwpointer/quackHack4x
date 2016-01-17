@@ -47,6 +47,10 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('*', function(req, res){
+  res.sendFile(__dirname +"/"+ request[request.length - 1]);
+});
+
 io.on('connection', function(socket){
   //this is mystery code which allows one handler for all (non-default) events
   var onevent = socket.onevent;
@@ -56,6 +60,7 @@ io.on('connection', function(socket){
       packet.data = ["*"].concat(args);
       onevent.call(this, packet);      // additional call to catch-all
   };
+  //end mystery code
 
   var clientId = socket.client.conn.id;
   console.log("Client: "+clientId+" has connected.");
