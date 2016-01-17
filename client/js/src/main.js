@@ -39,7 +39,7 @@ var example = (function(){
 		util         = require('./util.js'),
 		black        = 0x222222,
 		white        = 0xffffff,
-		mode 		 = PLACE_TURRET,
+		mode 		 = CREEP,
 		player       = {},
 		aStar        = require('./astar.js'),
 		colliderSystem	= new THREEx.ColliderSystem(),
@@ -48,7 +48,10 @@ var example = (function(){
 		tileMap
 	;	
 
-	// window.BottomBar = require('./ui.js');
+	window.mode = mode;
+	window.creepsToLauch = 1;
+
+	window.BottomBar = require('./ui.js');
 
 	function init () {
 		afix(renderer, 'scene');
@@ -94,7 +97,7 @@ var example = (function(){
 		scene.add(light);
 
 		// creepFactory(terrainCostMap);
-		setInterval(creepFactory,1000);
+		setTimeout(creepFactory,1000);
 		// console.log("CREEP",player.creeps[0].position)
 		
 		render();
@@ -111,7 +114,7 @@ var example = (function(){
 		colliderSystem.computeAndNotify(colliders);
 		terrainCostMap = (tileMap.map(x=>{
 			return x.map(y=>{
-				console.log(y.userData.terrainCost);
+				// console.log(y.userData.terrainCost);
 				return y.userData.terrainCost
 			})
 		}))
@@ -138,8 +141,8 @@ var example = (function(){
 
 	function onDocumentMouseDown(event) {
 		var object = getIntersectedObject();
-		console.log(object.position);
-		if(mode == PLACE_TURRET){
+		// console.log(object.position);
+		if(window.mode == PLACE_TURRET){
 			// console.log("place turret");
 			console.log(object.userData, );
 			object.userData.terrainCost = 400;
@@ -147,6 +150,7 @@ var example = (function(){
 			var tower = (util.tower(player.color));
 			tower.position.set(object.position.x, object.position.y+.01, object.position.z);
 			scene.add(tower);
+			window.mode = CREEP;
 			// send message
 		}
 	}
@@ -161,34 +165,41 @@ var example = (function(){
 			0,
 			getRandomArbitrary(min, max)
 		)
-		console.log(vec);
+		// console.log(vec);
 		return vec;
 	}
 
 	function creepFactory(){
-		console.log("CREEP");
-		var creep = util.creeps(player.color);
+		console.log("asdfasdf", window.creepsToLauch);
+		if (window.creepsToLauch > 0) {
+			
+			var creep = util.creeps(player.color);
 
-		// colliderSystem.add(collider)
-		var rp = getRandomVector(0,1);
-		creep.position.set(rp.x, rp.y, rp.z+1)
-		creep.position.set(2,0,0);
-		player.creeps.push(creep);
-		scene.add(creep);
-		var p = creep.position;
-		// console.log(path);
+			// colliderSystem.add(collider)
+			var rp = getRandomVector(0,1);
+			creep.position.set(rp.x, rp.y, rp.z+1)
+			creep.position.set(2,0,0);
+			player.creeps.push(creep);
+			scene.add(creep);
+			var p = creep.position;
+			// console.log(path);
 
-		var go = util.combinePath(
-			creep, 
-			function(){
-				return aStar([6-(p.z+3),6-(p.x+3)],[1,4], terrainCostMap)
-			},
-			function(){
-				console.log("asdfasdfasdfasdf");
-			}
-		);
+			var go = util.combinePath(
+				creep, 
+				function(){
+					return aStar([6-(p.z+3),6-(p.x+3)],[1,4], terrainCostMap)
+				},
+				function(){
+					console.log("asdfasdfasdfasdf");
+				}
+			);
 
-		go.start();
+			go.start();
+			window.creepsToLauch--;
+		}
+		setTimeout(creepFactory,100);
+
+		
 	}
 
 

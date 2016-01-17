@@ -26,7 +26,7 @@ var BottomBar = React.createClass({
   
   componentDidMount: function() {
     setTimeout(this.incrementChargeBar,100);
-  	setTimeout(this.incrementAllCounters,1000);
+  	setTimeout(this.incrementAllCounters,100);
   },
     
   incrementChargeBar: function() {
@@ -66,11 +66,12 @@ var BottomBar = React.createClass({
         creepCount: this.state.creepCount + 1
     });
     this.countersChanged();
-    setTimeout(this.incrementAllCounters,1000);
+    setTimeout(this.incrementAllCounters,100);
   },
   
   placeTurret: function() {
   	if (this.state.numGold >= 50) {
+      window.mode = "PLACE_TURRET";
       this.setState({
         numGold: this.state.numGold - 50,
         turretReadySoundPlayed: false
@@ -91,15 +92,18 @@ var BottomBar = React.createClass({
         creepText: "Charging the Creepers",
         creepDisabled: true
     });
-    if (this.state.creepCount >= 30) {
+    if (this.state.creepCount >= 3) {
+      window.creepsToLauch = 10;
         var sound = new howl.Howl({
             urls: ['media/multiple-creepers.ogg']
         }).play();
-    } else if (this.state.creepCount >= 20) {
+    } else if (this.state.creepCount >= 2) {
+      window.creepsToLauch = 3;
         var sound = new howl.Howl({
             urls: ['media/release-three-creep.ogg']
         }).play();
-    } else if (this.state.creepCount >= 10) {
+    } else if (this.state.creepCount >= 1) {
+      window.creepsToLauch = 1;
         var sound = new howl.Howl({
             urls: ['media/release-single-creep.ogg']
         }).play();
