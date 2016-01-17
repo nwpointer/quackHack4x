@@ -1,4 +1,6 @@
-var gameName = $("#gameName").text();
+var $ = document.getElementById;
+
+var gameName = $("gameName").text;
 
 var chatMessageItem = gameName + "_chatMessage";
 var turretPlacementItem = gameName + "_turretPlacement";
@@ -10,18 +12,28 @@ var creeperLocationsItem = gameName + "_creeperLocations";
 //-------------Socket listeners---------------
 
 socket.on(gameName + '_chatMessage', function(msg){
-	$('#messages').append($('<li>').text(msg));
+	var ul = $("messages");
+	var li = document.createElement("li");
+	li.appendChild(document.innerHTML(msg));
+	ul.appendChild(li);
 });
 
 socket.on(turretPlacementItem, function(msg){
 	console.log("We got a turretPlacement " + JSON.parse(msg));
 	msg = '<b>Turret placement:</b> ' + msg;
-	$('#messages').append($('<li>').html(msg));
+	var ul = $("messages");
+	var li = document.createElement("li");
+	li.appendChild(document.innerHTML(msg));
+	ul.appendChild(li);
 });
 
 socket.on(hitItem, function(msg){
 	console.log("We got a hit ");
-	$('#messages').append($('<li>').html('<b>Someone was hit:</b>'));
+	msg = '<b>Someone was hit:</b>';
+	var ul = $("messages");
+	var li = document.createElement("li");
+	li.appendChild(document.innerHTML(msg));
+	ul.appendChild(li);
 });
 
 socket.on(creeperLocationsItem, function(msg){
@@ -60,7 +72,7 @@ function sendTurretPlacement(e) {
     sendMessage(turretPlacementItem, turretPlacementString);
 }
 
-$("#canvas").on("click", validateTurretPlacement);
+$("canvas").onclick = validateTurretPlacement;
 
 
 //------------Hit Code---------------------------------
@@ -69,7 +81,7 @@ function sendHit() {
     sendMessage(hitItem, "true");
 }
 
-$("#hit").on("click", sendHit);
+$("hit").onclick = sendHit;
 
 
 //------------Creeper Code---------------------------------
@@ -105,8 +117,8 @@ function sendCreeperArray() {
 
 //----------Send message Code----------------------------
 
-$('#sendMsg').on("click", function(){
-	sendMessage(chatMessageItem, $('#inputBox').val());
-	$('#inputBox').val('');
+$('sendMsg').onclick = function(){
+	sendMessage(chatMessageItem, $('inputBox').value;
+	$('inputBox').value = '';
 	return false;
 });
