@@ -135,9 +135,7 @@ var BottomBar = React.createClass({
             <link rel="stylesheet" type="text/css" href="style.css" />
         
             <div className="left" style={{float:'left', width: '25%', height:'50px'}}>
-                <div className="numcoins" style={{float:'left', width: '25%'}}>
-                    {this.state.numGold} 
-                </div>
+                <div className="numcoins" style={{float:'left', width: '25%'}}>{this.state.numGold}</div>
                 <div className="coins" style={{float:'left', width: '75%', height: '100%'}}>
                     <img id="coin-img" src="coins.png" alt="Coins" />
                 </div>
@@ -146,9 +144,7 @@ var BottomBar = React.createClass({
             <div className="totalBar" style={{display: 'inline-block', margin:'0 auto', width:'50%'}}>
                 
                 <div className="fire-creep">
-                    <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps} style={{position: 'relative', width: '100%'}}>
-                        {this.state.creepText}
-                    </button>
+                    <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps} style={{position: 'relative', width: '100%'}}>{this.state.creepText}</button>
                 </div>
             </div>
         
