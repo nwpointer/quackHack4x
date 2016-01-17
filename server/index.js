@@ -49,11 +49,6 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('*', function(req, res){
-  var request = req.url.split('/');
-  res.sendFile(__dirname +"/"+ request[request.length - 1]);
-});
-
 io.on('connection', function(socket){
   //this is mystery code which allows one handler for all (non-default) events
   var onevent = socket.onevent;
