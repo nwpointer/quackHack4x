@@ -1,4 +1,4 @@
-var MAPSIZE = 100;
+var MAPSIZE = 10;
 
 function PathNode(location, heuristic, cost, parent){
 	return{
@@ -8,9 +8,7 @@ function PathNode(location, heuristic, cost, parent){
 		parent:parent
 	}
 }
-
 function getHeuristic(newLocation, finish) {
-
 	if (newLocation[0] < 0 || newLocation[1] < 0 || newLocation[0] > MAPSIZE || newLocation[1] > MAPSIZE) {
 		return 99999;
 	}
@@ -37,8 +35,6 @@ function createPath(node, start) {
 	var from;
 
 	while ( !(to.location[0] == start[0] && to.location[1] == start[1] ) ) {
-		console.log("to node: ", to);
-
 		from = to.parent;
 		var xMove = to.location[0] - from.location[0];
 		var yMove = to.location[1] - from.location[1];
@@ -68,14 +64,11 @@ function createPath(node, start) {
 			}
 		}
 		to = from;
-
 	}
-
-
 	return path;
 }
 
-function scanSurround(node, finish, closedList, openList) {
+function scanSurround(node, finish, closedList, openList, terrain) {
 	if(node.location){
 		var X = node.location[0];
 		var Y = node.location[1];
@@ -91,10 +84,7 @@ function scanSurround(node, finish, closedList, openList) {
 		for (var j = -1; j < 2; j++) {
 			var newCost = 99999;
 			newLocation = [(X+i),(Y+j)];
-			//TODO: do inbounds checking here.
-			// console.log("from scanSurround, newLocation: ", newLocation);
 			if (newLocation[0] < 0 || newLocation[0] > MAPSIZE || newLocation[1] < 0 || newLocation[1] > MAPSIZE) {
-				// newCost = 99999;
 				if (!inClosedList(newLocation,closedList)) {
 					closedList.push(PathNode(newLocation,getHeuristic(newLocation, finish), 99999, null));
 				}
@@ -106,7 +96,7 @@ function scanSurround(node, finish, closedList, openList) {
 				newCost = 14;
 			}
 			//TODO: add terrain cost calcs here.
-			// var inList = closedList.location.indexOf(newLocation);
+			newCost += terrain[newLocation[0]][newLocation[1]];
 			if (!inClosedList(newLocation, closedList)) {
 
 				var newNode = PathNode(newLocation, getHeuristic(newLocation, finish), node.cost + newCost, node);
@@ -116,20 +106,15 @@ function scanSurround(node, finish, closedList, openList) {
 			}
 		}
 	}
-			// console.log("open list: ", openList);
-
 }
 
-module.exports = function(start, finish) {
+var aStar = module.exports = function(start, finish, terrain) {
 	var openList = [];
 	var closedList = [];
 	var begin = PathNode(start, getHeuristic(start,finish), 0, null);
 	openList.push(begin);
 
 	while(openList.length > 0) {
-		// openList.sort(function (a,b) {return ((a.cost+a.heuristic) < (b.cost + b.heuristic))} );
-		// console.log("openList is ", openList);
-		// var temp = openList.slice(0,1);
 		var temp = openList.shift();
 		openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
 		// if (temp[0].location[0] == finish[0] && temp[0].location[1] == finish[1]) {
@@ -139,14 +124,10 @@ module.exports = function(start, finish) {
 		}
 		else {
 			closedList.push(temp);
-			scanSurround(temp, finish, closedList, openList);
-			// console.log("exiting scanSurround ", openList, closedList);
-
+			scanSurround(temp, finish, closedList, openList, terrain);
 		}
 	}
 }
-
-
 
 // function main() {
 // 	console.log("Let's run A*");

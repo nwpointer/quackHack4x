@@ -43,7 +43,7 @@ var example = (function(){
 		aStar        = require('./astar.js')
 	;	
 
-	window.BottomBar = require('./ui.js');
+	// window.BottomBar = require('./ui.js');
 
 	function init () {
 		afix(renderer, 'scene');
@@ -98,10 +98,10 @@ var example = (function(){
 		creepFactory();
 		// setInterval(creepFactory,1000);
 
-		util.combinePath(
-			player.creeps[0], 
-			aStar([0,0],[0,2],terrainCostMap)
-		).start();
+		// util.combinePath(
+		// 	player.creeps[0], 
+		// 	aStar([0,0],[0,2],terrainMap)
+		// ).start();
 		render();
 	}
 
