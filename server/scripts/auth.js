@@ -22,8 +22,8 @@ socket.on(authMsg, function(msg){
 	console.log("Got an authMsg back with msg: "+msg);
 	if(msg) {
 		$("#authResult").html("Approved.");
-		var gameName = $('#inputBox').val();
-		window.location.replace("/postAuth.html?"+gameName);
+		$("#gameName").text($('#inputBox').val());
+		$("#content").load("postAuth.html")
 	}
 	else {
 		$("#authResult").html("Sorry, that game is full.");

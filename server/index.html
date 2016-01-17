@@ -5,12 +5,18 @@
   </head>
   <body>
 
-    <input id="inputBox" autocomplete="off" />
-    <button id="getAuth">Enter Game Name</button>
+    <div id="content">
 
-    <br/>
-    <br/>
-    <div id="authResult"></div>
+      <input id="inputBox" autocomplete="off" />
+      <button id="getAuth">Enter Game Name</button>
+
+      <br/>
+      <br/>
+      <div id="authResult"></div>
+
+    </div>
+
+    <div id="gameName" hidden></div>
 
 
     <script src="/socket.io/socket.io.js"></script>

@@ -1,26 +1,23 @@
-var socket = io();
-
-$("#header").text(window.location.search.replace("?", ""));
-
+var gameName = $("#gameName").text();
 
 //-------------Socket listeners---------------
 
-socket.on('chat message', function(msg){
+socket.on(gameName + '_chatMessage', function(msg){
 	$('#messages').append($('<li>').text(msg));
 });
 
-socket.on('turretPlacement', function(msg){
+socket.on(gameName+'_turretPlacement', function(msg){
 	console.log("We got a turretPlacement " + JSON.parse(msg));
 	msg = '<b>Turret placement:</b> ' + msg;
 	$('#messages').append($('<li>').html(msg));
 });
 
-socket.on('hit', function(msg){
+socket.on(gameName+'_hit', function(msg){
 	console.log("We got a hit ");
 	$('#messages').append($('<li>').html('<b>Someone was hit:</b>'));
 });
 
-socket.on('creeperLocations', function(msg){
+socket.on(gameName+'_creeperLocations', function(msg){
 	$('#messages').append($('<li>').text(msg));
 });
 
@@ -46,7 +43,7 @@ function sendTurretPlacement(e) {
 	var turretPlacementString = JSON.stringify(turret);
 
     console.log("Sending turret coords at " + turretPlacementString);
-    socket.emit('turretPlacement', turretPlacementString);
+    socket.emit(gameName+'_turretPlacement', turretPlacementString);
 }
 
 $("#canvas").on("click", validateTurretPlacement);
@@ -56,7 +53,7 @@ $("#canvas").on("click", validateTurretPlacement);
 
 function sendHit() {
     console.log("I hit you!");
-    socket.emit('hit', "true");
+    socket.emit(gameName+'_hit', "true");
 }
 
 $("#hit").on("click", sendHit);
@@ -93,7 +90,7 @@ function sendCreeperArray() {
 //----------Send message Code----------------------------
 
 $('#sendMsg').on("click", function(){
-	socket.emit('chat message', $('#inputBox').val());
+	socket.emit(gameName+'_chatMessage', $('#inputBox').val());
 	$('#inputBox').val('');
 	return false;
 });
