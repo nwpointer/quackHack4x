@@ -1,3 +1,4 @@
+var io = require('socket.io');
 module.exports = (function(){
 	return {
 		main: function() {
