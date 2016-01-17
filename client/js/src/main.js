@@ -41,6 +41,7 @@ var example = (function(){
 		white        = 0xffffff,
 		mode 		 = CREEP,
 		player       = {},
+		oponent       = {},
 		aStar        = require('./astar.js'),
 		colliderSystem	= new THREEx.ColliderSystem(),
 		healthbar    = require('./ui.js').HealthBar,
@@ -63,6 +64,7 @@ var example = (function(){
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		player = {color:white, creeps:[]} 
+		oponent = {color:black, creeps:[]} 
 
 		var terrainTypes = [tile(0x458B00), tile(0xffee22)];
 		var terrainMap = [
@@ -78,9 +80,10 @@ var example = (function(){
 		tileMap = util.addTerrain(terrainMap, terrainTypes, scene);
 		// tileMap[4][4].userData.terrainCost = 400;
 
-		var tower = (util.tower(black));
-		tower.position.set(-1,0,1);
-		scene.add(tower);
+		// var tower = (util.tower(black));
+		// tower.position.set(-1,0,1);
+		// scene.add(tower);
+
 
 		var whiteCity = util.city(0xffffff);
 
@@ -99,7 +102,9 @@ var example = (function(){
 		scene.add(light);
 
 		// creepFactory(terrainCostMap);
-		setTimeout(creepFactory,1000);
+		// setTimeout(creepFactory.bind(this, player),1000);
+
+		setTimeout(creepFactory.bind(this, oponent),1000);
 		// console.log("CREEP",player.creeps[0].position)
 		
 		render();
@@ -212,25 +217,36 @@ var example = (function(){
 		}
 	}
 
-	function creepFactory(){
+	function creepFactory(user){
 		// console.log("asdfasdf", window.creepsToLauch);
 		if (window.creepsToLauch > 0) {
 			
-			var creep = util.creeps(player.color);
-
+			var creep = util.creeps(user.color);
 			// colliderSystem.add(collider)
-			var rp = getRandomVector(0,1);
-			creep.position.set(rp.x, rp.y, rp.z+1)
-			creep.position.set(2,0,0);
-			player.creeps.push(creep);
-			scene.add(creep);
-			var p = creep.position;
+			// var rp = getRandomVector(0,1);
+			// creep.position.set(rp.x, rp.y, rp.z+1)
+			
+			
+			
+			
 			// console.log(path);
+
+			if(user == oponent){
+				// console.log("oponent");
+				var poz =[4,1];
+				creep.position.set(-1,0,2);
+			}else{
+				creep.position.set(2,0,0);
+				var poz =[1,4];
+			}
+			user.creeps.push(creep);
+			var p = creep.position;
+			scene.add(creep);
 
 			var go = util.combinePath(
 				creep, 
 				function(){
-					return aStar([6-(p.z+3),6-(p.x+3)],[1,4], terrainCostMap)
+					return aStar([6-(p.z+3),6-(p.x+3)],[poz[0],poz[1]], terrainCostMap)
 				},
 				function(){
 					console.log("reached holy land");
@@ -244,9 +260,7 @@ var example = (function(){
 			go.start();
 			window.creepsToLauch--;
 		}
-		setTimeout(creepFactory,100);
-
-		
+		setTimeout(creepFactory.bind(null,user) ,100);
 	}
 
 
