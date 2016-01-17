@@ -147,7 +147,7 @@ var BottomBar = React.createClass({
             </div>
         
             <div className="turret-bank" style={{float:'right', width:'25%'}}>
-                <button onClick={this.placeTurret} disabled={this.state.trtDisabled} style={{float:'right'}}>
+                <button className="trtBtttn" onClick={this.placeTurret} disabled={this.state.trtDisabled} style={{float:'right'}}>
                     <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" style={{float:'right'}} />
                 </button>
             </div>

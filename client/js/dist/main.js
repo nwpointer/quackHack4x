@@ -529,7 +529,7 @@ var BottomBar = React.createClass({
                 { className: 'turret-bank', style: { float: 'right', width: '25%' } },
                 React.createElement(
                     'button',
-                    { onClick: this.placeTurret, disabled: this.state.trtDisabled, style: { float: 'right' } },
+                    { className: 'trtBtttn', onClick: this.placeTurret, disabled: this.state.trtDisabled, style: { float: 'right' } },
                     React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g', id: 'trtbtn', style: { float: 'right' } })
                 )
             )
