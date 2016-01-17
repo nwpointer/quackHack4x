@@ -9,7 +9,10 @@ var BottomBar = React.createClass({
       creepText: "Charging the Creepers",
       creepDisabled: true,
       creepCount: 0,
-      turretImg: "turret.png"
+      turretImg: "turret.png",
+      widthOne: 0,
+      widthTwo: 0,
+      widthThree: 0
     }
   },
   
@@ -37,9 +40,13 @@ var BottomBar = React.createClass({
     
   launchCreeps: function() {
     this.setState({
-      creepCount: 0
+      creepCount: 0,
+        widthThree: 0,
+        widthTwo: 0,
+        widthOne: 0,
+        creepText: "Charging the Creepers",
+        creepDisabled: true
     })
-    this.countersChanged();
   },
   
   countersChanged: function() {
@@ -56,19 +63,27 @@ var BottomBar = React.createClass({
     }
     if (this.state.creepCount >= 30) {
         this.setState({
+            widthThree: 100,
             creepText: "10 Creeps Ready to Launch!"
         })
     } else if (this.state.creepCount >= 20) {
         this.setState({
+            widthThree: widthThree + 10,
+            widthTwo: 100,
             creepText: "3 Creeps Ready to Launch"
         })
     } else if (this.state.creepCount >= 10) {
         this.setState({
+            widthTwo: widthTwo + 10,
+            widthOne: 100,
             creepText: "1 Creep Ready to Launch",
             creepDisabled: false
         })
     } else {
         this.setState({
+            widthThree: 0,
+            widthTwo: 0,
+            widthOne: widthOne + 10,
             creepText: "Charging the Creepers",
             creepDisabled: true
         })
@@ -93,8 +108,13 @@ var BottomBar = React.createClass({
                 <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" />
             </button>
         </div>
-        
         <div class="fire-creep">
+        
+            <div class="barholder" width="400" height="110">
+                
+                <div width="100" height="100" style={{background: 'red'}} />
+            </div>
+
             <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps}>
                 {this.state.creepText}
             </button>
