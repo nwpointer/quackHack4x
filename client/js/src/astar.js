@@ -91,9 +91,12 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 			} else if (i == 0 && j == 0) {
 				//Where I am now
 			} else if (i == 0 || j == 0) {
-				newCost = 10;
+				newCost = 10 + terrain[newLocation[0]][newLocation[1]];
+				console.log("total cost: ", newCost);
 			} else {
-				newCost = 14;
+				newCost = 14 + terrain[newLocation[0]][newLocation[1]];
+				console.log("total cost: ", newCost);
+
 			}
 			//TODO: add terrain cost calcs here.
 			// newCost += terrain[newLocation[0]],[newLocation[1]];
@@ -101,7 +104,7 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 
 				var newNode = PathNode(newLocation, getHeuristic(newLocation, finish), node.cost + newCost, node);
 				openList.push(newNode);
-				openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
+				openList.sort(function (a,b) {return ( (a.cost + a.heuristic) - (b.cost + b.heuristic) )} );
 
 			}
 		}
@@ -114,8 +117,14 @@ var aStar = module.exports = function(start, finish, terrain) {
 	var begin = PathNode(start, getHeuristic(start,finish), 0, null);
 	openList.push(begin);
 
+	terrain =terrain.reverse();
+	terrain.map(x=>{
+		return x.reverse();
+	})
+console.log("terrain: ", terrain[1][1]);
 	while(openList.length > 0) {
 		var temp = openList.shift();
+		console.log("Looking at: ", temp);
 		openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
 		// if (temp[0].location[0] == finish[0] && temp[0].location[1] == finish[1]) {
 			if (temp.heuristic == 0) {

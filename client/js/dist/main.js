@@ -93,9 +93,11 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 			} else if (i == 0 && j == 0) {
 				//Where I am now
 			} else if (i == 0 || j == 0) {
-					newCost = 10;
+					newCost = 10 + terrain[newLocation[0]][newLocation[1]];
+					console.log("total cost: ", newCost);
 				} else {
-					newCost = 14;
+					newCost = 14 + terrain[newLocation[0]][newLocation[1]];
+					console.log("total cost: ", newCost);
 				}
 			//TODO: add terrain cost calcs here.
 			// newCost += terrain[newLocation[0]],[newLocation[1]];
@@ -117,8 +119,14 @@ var aStar = module.exports = function (start, finish, terrain) {
 	var begin = PathNode(start, getHeuristic(start, finish), 0, null);
 	openList.push(begin);
 
+	terrain = terrain.reverse();
+	terrain.map(function (x) {
+		return x.reverse();
+	});
+	console.log("terrain: ", terrain[1][1]);
 	while (openList.length > 0) {
 		var temp = openList.shift();
+		console.log("Looking at: ", temp);
 		openList.sort(function (a, b) {
 			return a.cost + a.heuristic - (b.cost + b.heuristic);
 		});
@@ -206,7 +214,7 @@ var example = function () {
 		var terrainMap = [[0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 1, 0], [0, 0, 0, 1, 1, 0], [0, 1, 0, 0, 1, 0], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0]];
 
 		var tileMap = util.addTerrain(terrainMap, terrainTypes, scene);
-		tileMap[0][0].userData.terrainCost = 400;
+		tileMap[4][4].userData.terrainCost = 400;
 		var terrainCostMap = tileMap.map(function (x) {
 			return x.map(function (y) {
 				console.log(y.userData.terrainCost);
@@ -234,10 +242,19 @@ var example = function () {
 		scene.add(ambient);
 		scene.add(light);
 
-		creepFactory();
+		var cr1 = creepFactory();
+		cr1.position.set(3, 0, 3);
+		scene.add(cr1);
+
+		var cr2 = creepFactory();
+		// cr2.position.set(3,0,2);
+		scene.add(cr2);
 		// setInterval(creepFactory,1000);
 
-		util.combinePath(player.creeps[0], aStar([0, 0], [0, 2], terrainMap)).start();
+		var path = aStar([0, 0], [3, 3], terrainCostMap);
+		console.log(path);
+
+		util.combinePath(player.creeps[0], path).start();
 		render();
 	}
 
@@ -284,6 +301,7 @@ var example = function () {
 		console.log(object.position);
 		if (mode == PLACE_TURRET) {
 			console.log("place turret");
+			console.log("weight", object.userData.terrainCost);
 			var tower = util.tower(player.color);
 			tower.position.set(object.position.x, object.position.y + .01, object.position.z);
 			scene.add(tower);
@@ -307,14 +325,16 @@ var example = function () {
 		var collider = THREEx.Collider.createFromObject3d(creep);
 		var helper = new THREEx.ColliderHelper(collider);
 		helper.material.color.set('green');
-		scene.add(helper);
+		creep.add(helper);
+		// scene.add(helper)
 		colliders.push(collider);
 		// colliderSystem.add(collider)
 		// var rp = getRandomVector(0,1);
 		// creep.position.set(rp.x, rp.y, rp.z+1)
-		creep.position.set(3, 0, 3);
+		// creep.position.set(3,0,3);
 		player.creeps.push(creep);
-		scene.add(creep);
+		return creep;
+		// scene.add(creep);
 	}
 
 	// function onDocumentMouseUP(event){
@@ -416,46 +436,46 @@ var move = module.exports.move = function (object, direction, distance, then) {
 		z: object.position.z
 	};
 	switch (direction) {
-		case 7:
-			target = {
-				x: object.position.x - distance,
-				z: object.position.z - distance
-			};
-			break;
-		case 2:
-			target = {
-				x: object.position.x + distance,
-				z: object.position.z + distance
-			};
-			break;
-		case 4:
-			target = {
-				x: object.position.x - distance,
-				z: object.position.z + distance
-			};
-			break;
-		case 5:
-			target = {
-				x: object.position.x + distance,
-				z: object.position.z - distance
-			};
-			break;
-		case 6:
-			target = {
-				x: object.position.x - distance
-			};
-			break;
-		case 3:
-			target = {
-				x: object.position.x + distance
-			};
-			break;
 		case 8:
 			target = {
+				x: object.position.x - distance,
 				z: object.position.z - distance
 			};
 			break;
 		case 1:
+			target = {
+				x: object.position.x + distance,
+				z: object.position.z + distance
+			};
+			break;
+		case 6:
+			target = {
+				x: object.position.x - distance,
+				z: object.position.z + distance
+			};
+			break;
+		case 3:
+			target = {
+				x: object.position.x + distance,
+				z: object.position.z - distance
+			};
+			break;
+		case 7:
+			target = {
+				x: object.position.x - distance
+			};
+			break;
+		case 2:
+			target = {
+				x: object.position.x + distance
+			};
+			break;
+		case 5:
+			target = {
+				z: object.position.z - distance
+			};
+			break;
+		case 4:
 			target = {
 				z: object.position.z + distance
 			};

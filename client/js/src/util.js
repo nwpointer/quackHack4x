@@ -93,46 +93,46 @@ var move = module.exports.move = function(object, direction, distance, then){
 			z:object.position.z
 		};
 		switch(direction){
-			case 7:
+			case 8:
 				target = {
 					x:object.position.x-distance,
 					z:object.position.z-distance
 				};
 				break;
-			case 2:
+			case 1:
 				target = {
 					x:object.position.x+distance,
 					z:object.position.z+distance
-				};
-				break;
-			case 4:
-				target = {
-					x:object.position.x-distance,
-					z:object.position.z+distance
-				};
-				break;
-			case 5:
-				target = {
-					x:object.position.x+distance,
-					z:object.position.z-distance
 				};
 				break;
 			case 6:
 				target = {
 					x:object.position.x-distance,
+					z:object.position.z+distance
 				};
 				break;
 			case 3:
 				target = {
 					x:object.position.x+distance,
+					z:object.position.z-distance
 				};
 				break;
-			case 8:
+			case 7:
+				target = {
+					x:object.position.x-distance,
+				};
+				break;
+			case 2:
+				target = {
+					x:object.position.x+distance,
+				};
+				break;
+			case 5:
 				target = {
 					z:object.position.z-distance
 				};
 				break;
-			case 1:
+			case 4:
 				target = {
 					z:object.position.z+distance
 				};

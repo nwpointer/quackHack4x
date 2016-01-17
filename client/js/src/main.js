@@ -47,6 +47,7 @@ var example = (function(){
 	;	
 
 	// window.BottomBar = require('./ui.js');
+	
 
 	function init () {
 		afix(renderer, 'scene');
@@ -67,16 +68,15 @@ var example = (function(){
 			[0,0,1,0,0,0],
 		];
 
+
 		var tileMap = util.addTerrain(terrainMap, terrainTypes, scene);
-		tileMap[0][0].userData.terrainCost = 400;
+		tileMap[4][4].userData.terrainCost = 400;
 		var terrainCostMap = (tileMap.map(x=>{
 			return x.map(y=>{
 				console.log(y.userData.terrainCost);
 				return y.userData.terrainCost
 			})
 		}))
-
-
 
 		var tower = (util.tower(black));
 		tower.position.set(-1,0,1);
@@ -98,13 +98,22 @@ var example = (function(){
 		scene.add(ambient);
 		scene.add(light);
 
-		creepFactory();
+		var cr1 = creepFactory();
+		cr1.position.set(3,0,3);
+		scene.add(cr1);
+
+		var cr2 = creepFactory();
+		// cr2.position.set(3,0,2);
+		scene.add(cr2);
 		// setInterval(creepFactory,1000);
 
 
+		var path =aStar([0,0],[3,3],terrainCostMap);
+		console.log(path);
+
 		util.combinePath(
 			player.creeps[0], 
-			aStar([0,0],[0,2],terrainMap)
+			path
 		).start();
 		render();
 	}
@@ -144,6 +153,7 @@ var example = (function(){
 		console.log(object.position);
 		if(mode == PLACE_TURRET){
 			console.log("place turret");
+			console.log("weight", object.userData.terrainCost);
 			var tower = (util.tower(player.color));
 			tower.position.set(object.position.x, object.position.y+.01, object.position.z);
 			scene.add(tower);
@@ -171,14 +181,16 @@ var example = (function(){
 		var collider    = THREEx.Collider.createFromObject3d(creep)
 		var helper	= new THREEx.ColliderHelper(collider)
 		helper.material.color.set('green')
-		scene.add(helper)
+		creep.add(helper);
+		// scene.add(helper)
 		colliders.push(collider)
 		// colliderSystem.add(collider)
 		// var rp = getRandomVector(0,1);
 		// creep.position.set(rp.x, rp.y, rp.z+1)
-		creep.position.set(3,0,3);
+		// creep.position.set(3,0,3);
 		player.creeps.push(creep);
-		scene.add(creep);
+		return creep;
+		// scene.add(creep);
 	}
 
 
