@@ -20,7 +20,7 @@ function inClosedList(newLocation, closedList) {
 	for (var i = 0; i < closedList.length; i++) {
 		if (newLocation[0] == closedList[i].location[0]) {
 			if (newLocation[1] == closedList[i].location[1]) {
-				console.log(newLocation," is in the closed list.");
+				// console.log(newLocation," is in the closed list.");
 				return true;
 			}
 		}
@@ -76,7 +76,7 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 	}
 	else
 	{
-		console.log("badWrong");
+		// console.log("badWrong");
 		return;
 	}
 	
@@ -92,10 +92,10 @@ function scanSurround(node, finish, closedList, openList, terrain) {
 				//Where I am now
 			} else if (i == 0 || j == 0) {
 				newCost = 10 + terrain[newLocation[0]][newLocation[1]];
-				console.log("total cost: ", newCost);
+				// console.log("total cost: ", newCost);
 			} else {
 				newCost = 14 + terrain[newLocation[0]][newLocation[1]];
-				console.log("total cost: ", newCost);
+				// console.log("total cost: ", newCost);
 
 			}
 			//TODO: add terrain cost calcs here.
@@ -124,7 +124,7 @@ var aStar = module.exports = function(start, finish, terrain) {
 console.log("terrain: ", terrain[1][1]);
 	while(openList.length > 0) {
 		var temp = openList.shift();
-		console.log("Looking at: ", temp);
+		// console.log("Looking at: ", temp);
 		openList.sort(function (a,b) {return ((a.cost+a.heuristic) - (b.cost + b.heuristic))} );
 		// if (temp[0].location[0] == finish[0] && temp[0].location[1] == finish[1]) {
 			if (temp.heuristic == 0) {

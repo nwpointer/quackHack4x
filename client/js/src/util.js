@@ -155,12 +155,24 @@ var move = module.exports.move = function(object, direction, distance, then){
 		return tween;
 }
 
-var combinePath = module.exports.combinePath = function(obj, arr){
+function isFunction(functionToCheck) {
+ var getType = {};
+ return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+}
+
+var combinePath = module.exports.combinePath = function(obj, arr, fin){
+	if(isFunction(arr)){
+		arr = arr();
+	}
 	var dir = arr.pop();
 	if(dir){
 		return move(obj,dir, 1, function(){
-			var n = combinePath(obj, arr);
+			var n = combinePath(obj, arr, fin);
 			if(n){
+				if(arr.length == 0){
+					fin();
+				}
+				// console.log(arr.length)
 				n.start();
 			}
 		})
