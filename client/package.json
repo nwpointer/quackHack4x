@@ -12,10 +12,13 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
     "babelify": "^7.2.0",
+    "express": "^4.13.3",
     "howl": "^0.2.0",
     "howler": "^1.1.28",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
+    "socket.io": "^1.4.4",
+    "three": "^0.73.1",
     "tween.js": "^16.3.4",
     "watchify": "^3.6.1"
   },

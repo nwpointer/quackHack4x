@@ -104,9 +104,9 @@ var example = (function(){
 		// creepFactory(terrainCostMap);
 		// setTimeout(creepFactory.bind(this, player),1000);
 
-		setTimeout(creepFactory.bind(this, oponent),1000);
+		setTimeout(creepFactory.bind(this, player),1000);
 		// console.log("CREEP",player.creeps[0].position)
-		
+		opponentPlaceTurret();
 		render();
 	}
 
@@ -151,7 +151,7 @@ var example = (function(){
 		// console.log(object.position);
 		if(window.mode == PLACE_TURRET){
 			// console.log("place turret");
-			console.log(object.userData, );
+			console.log(object.userData);
 			object.userData.terrainCost = 400;
 			// console.log("weight", object.userData.terrainCost);
 			var tower = (util.tower(player.color));
@@ -160,6 +160,45 @@ var example = (function(){
 			window.mode = CREEP;
 			fireTurret(object.position.x, object.position.y,0);
 			// send message
+		}
+	}
+
+	function opponentPlaceTurret() {
+		var [x,y] = [getRandomArbitrary(0,5), getRandomArbitrary(0,5)];
+		if ((x === 4 && y === 1) || (x === 1 && y === 4)) {
+			opponentPlaceTurret();
+		}
+		var tower = (util.tower(oponent.color));
+		tower.position.set(x-2, .01, y-2);
+		scene.add(tower);
+		opponentFireTurret(x-2,y-2,0);
+		setTimeout(opponentPlaceTurret, 600);
+	}
+
+	function opponentFireTurret(trtX, trtY, reloadTime) {
+		if (reloadTime > 0) {
+			setTimeout(function() {
+				opponentFireTurret(trtX, trtY, reloadTime-1);
+			}, 100);
+		} else {
+			for (var k = 0; k < player.creeps.length; k++) {
+				//if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] )) {
+				if (Math.abs(player.creeps[k].position.x - trtX) < 1 && Math.abs(player.creeps[k].position.y - trtY) < 1) {
+					var sound = new howl.Howl({
+				    	urls: ['media/turret-shot.ogg']
+				    }).play();
+                    player.creeps[k].userData.alive = false;
+					scene.remove(player.creeps[k]);
+					if(k != -1) {
+						player.creeps.splice(k, 1);
+					}
+					reloadTime = 30;
+					break;
+				}
+			}
+			setTimeout(function() {
+				opponentFireTurret(trtX, trtY, reloadTime);
+			}, 100);
 		}
 	}
 
@@ -178,34 +217,22 @@ var example = (function(){
 	}
 
 	function fireTurret(trtX, trtY, reloadTime) {
-		console.log("Fired Turret");
+		//console.log("Fired Turret");
 		if (reloadTime > 0) {
 			setTimeout(function() {
 				fireTurret(trtX, trtY, reloadTime-1);
 			}, 100);
 		} else {
-			/*scannedList = [];
-			for(i = -2; i < 3; i++) {
-				for(j = -2; j < 3; j++) {
-					//Scan around self
-					//if (trtX + i < 0 || trtY + j < 0 || trtX + i > 5 || trtY + j > 5) {
-
-					//} else if( i === 0 && k === 0) {
-
-					//else {
-						scannedList.push([Math.round(Number(trtX+i)), Math.round(Number(trtY+j))]);
-					//}
-				}
-			}*/
-			for (var k = 0; k < player.creeps.length; k++) {
+			for (var k = 0; k < oponent.creeps.length; k++) {
 				//if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] )) {
-				if (Math.abs(player.creeps[k].position.x - trtX) < 1 && Math.abs(player.creeps[k].position.y - trtY) < 1) {
+				if (Math.abs(oponent.creeps[k].position.x - trtX) < 1 && Math.abs(oponent.creeps[k].position.y - trtY) < 1) {
 					var sound = new howl.Howl({
 				    	urls: ['media/turret-shot.ogg']
 				    }).play();
-					scene.remove(player.creeps[k]);
+                    oponent.creeps[k].userData.alive = false;
+					scene.remove(oponent.creeps[k]);
 					if(k != -1) {
-						player.creeps.splice(k, 1);
+						oponent.creeps.splice(k, 1);
 					}
 					reloadTime = 30;
 					break;
@@ -221,7 +248,9 @@ var example = (function(){
 		// console.log("asdfasdf", window.creepsToLauch);
 		if (window.creepsToLauch > 0) {
 			
+
 			var creep = util.creeps(user.color);
+            creep.userData.alive = true;
 			// colliderSystem.add(collider)
 			// var rp = getRandomVector(0,1);
 			// creep.position.set(rp.x, rp.y, rp.z+1)
@@ -249,11 +278,15 @@ var example = (function(){
 					return aStar([6-(p.z+3),6-(p.x+3)],[poz[0],poz[1]], terrainCostMap)
 				},
 				function(){
-					console.log("reached holy land");
-					window.health -=1;
-					console.log(window.health);
-					healthbar();
-					//Decrease Health here
+                    if(creep.userData.alive) {
+                        console.log("reached holy land");
+                        window.health -=1;
+                        //console.log(window.health);
+                        healthbar();
+                        var sound = new howl.Howl({
+                            urls: ['media/death-sound.ogg']
+                        }).play();
+                    }
 				}
 			);
 
