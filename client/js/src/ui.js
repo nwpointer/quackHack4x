@@ -13,7 +13,8 @@ var BottomBar = React.createClass({
       turretImg: "turret.png",
       widthOne: 0,
       widthTwo: 0,
-      widthThree: 0
+      widthThree: 0,
+      turretReadySoundPlayed: true
     }
   },
   
@@ -33,7 +34,8 @@ var BottomBar = React.createClass({
   placeTurret: function() {
   	if (this.state.numGold >= 50) {
       this.setState({
-        numGold: this.state.numGold - 50
+        numGold: this.state.numGold - 50,
+        turretReadySoundPlayed: false
       })
       this.countersChanged();
       var sound = new howl.Howl({
@@ -50,7 +52,7 @@ var BottomBar = React.createClass({
         widthOne: 0,
         creepText: "Charging the Creepers",
         creepDisabled: true
-    })
+    });
     if (this.state.creepCount >= 30) {
         var sound = new howl.Howl({
             urls: ['media/multiple-creepers.ogg']
@@ -72,6 +74,14 @@ var BottomBar = React.createClass({
     		trtDisabled: false,
             turretImg: "turret.png"
       });
+      if (!this.state.turretReadySoundPlayed) {
+          var sound = new howl.Howl({
+                urls: ['media/turret-ready.ogg']
+          }).play();
+          this.setState({
+              turretReadySoundPlayed: true
+          });
+      }
     } else {
 	    this.setState({
     		trtDisabled: true,
@@ -125,7 +135,9 @@ var BottomBar = React.createClass({
                 <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" />
             </button>
         </div>
-        <div className="chargingbar" style={{background: 'red', display: 'inline-block', height:"100px", width:this.state.widthOne+"%"}} ></div>
+        <div className="chargingbarone" style={{background: 'blue', display: 'inline-block', height:"100px", width:this.state.widthOne+"%"}} ></div>
+        <div className="chargingbartwo" style={{background: 'green', display: 'inline-block', height:"100px", width:this.state.widthTwo+"%"}} ></div>
+        <div className="chargingbarthree" style={{background: 'red', display: 'inline-block', height:"100px", width:this.state.widthThree+"%"}} ></div>
         <div className="fire-creep">
             <button disabled={this.state.creepDisabled} id="firebtn" type="button" className="btn btn-default" onClick={this.launchCreeps}>
                 {this.state.creepText}

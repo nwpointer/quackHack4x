@@ -352,7 +352,8 @@ var BottomBar = React.createClass({
             turretImg: "turret.png",
             widthOne: 0,
             widthTwo: 0,
-            widthThree: 0
+            widthThree: 0,
+            turretReadySoundPlayed: true
         };
     },
 
@@ -372,7 +373,8 @@ var BottomBar = React.createClass({
     placeTurret: function placeTurret() {
         if (this.state.numGold >= 50) {
             this.setState({
-                numGold: this.state.numGold - 50
+                numGold: this.state.numGold - 50,
+                turretReadySoundPlayed: false
             });
             this.countersChanged();
             var sound = new howl.Howl({
@@ -411,6 +413,14 @@ var BottomBar = React.createClass({
                 trtDisabled: false,
                 turretImg: "turret.png"
             });
+            if (!this.state.turretReadySoundPlayed) {
+                var sound = new howl.Howl({
+                    urls: ['media/turret-ready.ogg']
+                }).play();
+                this.setState({
+                    turretReadySoundPlayed: true
+                });
+            }
         } else {
             this.setState({
                 trtDisabled: true,
@@ -471,7 +481,9 @@ var BottomBar = React.createClass({
                     React.createElement('img', { id: 'turret-img', src: this.state.turretImg, alt: 'Plain Turret - 50g', id: 'trtbtn' })
                 )
             ),
-            React.createElement('div', { className: 'chargingbar', style: { background: 'red', display: 'inline-block', height: "100px", width: this.state.widthOne + "%" } }),
+            React.createElement('div', { className: 'chargingbarone', style: { background: 'blue', display: 'inline-block', height: "100px", width: this.state.widthOne + "%" } }),
+            React.createElement('div', { className: 'chargingbartwo', style: { background: 'green', display: 'inline-block', height: "100px", width: this.state.widthTwo + "%" } }),
+            React.createElement('div', { className: 'chargingbarthree', style: { background: 'red', display: 'inline-block', height: "100px", width: this.state.widthThree + "%" } }),
             React.createElement(
                 'div',
                 { className: 'fire-creep' },
