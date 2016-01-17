@@ -36,5 +36,5 @@ socket.on(authMsg, function(msg){
 $('#getAuth').on("click", function(){
 	var gameName = $('#inputBox').val();
 	socket.emit(uuid + '_' + gameName +'_auth', 'true');
-	return false;
+	return;
 });

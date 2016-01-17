@@ -1,5 +1,11 @@
 var gameName = $("#gameName").text();
-console.log("The gameName has been set as: "+gameName);
+
+var chatMessageItem = gameName + "_chatMessage";
+var turretPlacementItem = gameName + "_turretPlacement";
+var hitItem = gameName + "_hit";
+var creeperLocationsItem = gameName + "_creeperLocations";
+
+
 
 //-------------Socket listeners---------------
 
@@ -7,19 +13,20 @@ socket.on(gameName + '_chatMessage', function(msg){
 	$('#messages').append($('<li>').text(msg));
 });
 
-socket.on(gameName+'_turretPlacement', function(msg){
+socket.on(turretPlacementItem, function(msg){
 	console.log("We got a turretPlacement " + JSON.parse(msg));
 	msg = '<b>Turret placement:</b> ' + msg;
 	$('#messages').append($('<li>').html(msg));
 });
 
-socket.on(gameName+'_hit', function(msg){
+socket.on(hitItem, function(msg){
 	console.log("We got a hit ");
 	$('#messages').append($('<li>').html('<b>Someone was hit:</b>'));
 });
 
-socket.on(gameName+'_creeperLocations', function(msg){
-	$('#messages').append($('<li>').text(msg));
+socket.on(creeperLocationsItem, function(msg){
+	console.log("Creepers: "+msg);
+	//$('#messages').append($('<li>').text(msg));
 });
 
 
@@ -50,9 +57,7 @@ function sendTurretPlacement(e) {
 	}
 
 	var turretPlacementString = JSON.stringify(turret);
-
-    console.log("Sending turret coords at " + turretPlacementString);
-    sendMessage(gameName+'_turretPlacement', turretPlacementString);
+    sendMessage(turretPlacementItem, turretPlacementString);
 }
 
 $("#canvas").on("click", validateTurretPlacement);
@@ -62,7 +67,7 @@ $("#canvas").on("click", validateTurretPlacement);
 
 function sendHit() {
     console.log("Sending message");
-    sendMessage(gameName+'_hit', "true");
+    sendMessage(hitItem, "true");
 }
 
 $("#hit").on("click", sendHit);
@@ -78,28 +83,32 @@ ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
 ctx.fillRect(20,20,5,5);
 
 function creeperLocationGenerator() {
-	return;
+	return {
+		X: Math.random()*300,
+		Y: Math.random()*300
+	};
 }
 
 function sendCreeperArray() {
-    
     var numOfCreepers = 5;
+    var creeperLocations = [];
 
+    for(var i=0; i<numOfCreepers; i++)
+    {
+    	creeperLocations.push(creeperLocationGenerator());
+    }
 
     console.log("The creepers are moving!");
-
-
-    //sendMessage('creeperLocations', "true");
+    sendMessage(creeperLocationsItem, JSON.stringify(creeperLocations));
 }
-
-//$("#hit").on("click", sendCreeperArray);
+window.setInterval(sendCreeperArray, 5000);
 
 
 
 //----------Send message Code----------------------------
 
 $('#sendMsg').on("click", function(){
-	sendMessage(gameName+'_chatMessage', $('#inputBox').val());
+	sendMessage(chatMessageItem, $('#inputBox').val());
 	$('#inputBox').val('');
 	return false;
 });
