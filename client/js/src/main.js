@@ -173,40 +173,42 @@ var example = (function(){
 	function fireTurret(trtX, trtY, reloadTime) {
 		console.log("Fired Turret");
 		if (reloadTime > 0) {
-			reloadTime--;
+			setTimeout(function() {
+				this.fireTurret(trtX, trtY, reloadTime-1);
+			}, 100);
 		} else {
-			scannedList = [];
-			for(i = -1; i < 2; i++) {
-				for(j = -1; j < 2; j++) {
+			/*scannedList = [];
+			for(i = -2; i < 3; i++) {
+				for(j = -2; j < 3; j++) {
 					//Scan around self
-					if (trtX + i < 0 || trtY + j < 0 || trtX + i > 5 || trtY + j > 5) {
+					//if (trtX + i < 0 || trtY + j < 0 || trtX + i > 5 || trtY + j > 5) {
 
-					} else if( i === 0 && k === 0) {
+					//} else if( i === 0 && k === 0) {
 
-					} else {
-						scannedList.push([trtX+i,trtY+j]);
-					}
+					//else {
+						scannedList.push([Math.round(Number(trtX+i)), Math.round(Number(trtY+j))]);
+					//}
 				}
-			}
-			for (k = 0; k < player.creeps.length; k++) {
-				if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] ) {
+			}*/
+			for (var k = 0; k < player.creeps.length; k++) {
+				//if (scannedList.contains([Math.round(Number(player.creeps[k].position.x)), Math.round(Number(player.creeps[k].position.y))] )) {
+				if (Math.abs(player.creeps[k].position.x - trtX) < 2 && Math.abs(player.creeps[k].position.y - trtY) < 2) {
 					scene.remove(player.creeps[k]);
-					var c = player.creeps.indexOf(player.creeps[k])
-					if(c != -1) {
-						player.creeps.splice(c, 1);
+					if(k != -1) {
+						player.creeps.splice(k, 1);
 					}
-					reloadTime = 30;
+					reloadTime = 0;
 					break;
 				}
 			}
+			setTimeout(function() {
+				fireTurret(trtX, trtY, reloadTime);
+			}, 100);
 		}
-		setTimeout(function() {
-			this.fireTurret(trtX,trtY,reloadTime);
-		}, 100);
 	}
 
 	function creepFactory(){
-		console.log("asdfasdf", window.creepsToLauch);
+		// console.log("asdfasdf", window.creepsToLauch);
 		if (window.creepsToLauch > 0) {
 			
 			var creep = util.creeps(player.color);
@@ -226,7 +228,7 @@ var example = (function(){
 					return aStar([6-(p.z+3),6-(p.x+3)],[1,4], terrainCostMap)
 				},
 				function(){
-					console.log("asdfasdfasdfasdf");
+					console.log("reached holy land");
 				}
 			);
 
