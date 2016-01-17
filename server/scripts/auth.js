@@ -33,6 +33,7 @@ socket.on(authMsg, function(msg){
 	console.log("Got an authMsg back with msg: "+msg);
 	if(msg) {
 		$("authResult").innerHTML = "Approved.";
+		debugger;
 		$("gameName").text = $('inputBox').value;
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
