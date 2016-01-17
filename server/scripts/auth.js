@@ -1,6 +1,6 @@
 var socket = io();
 
-var url = "postAuth.html";
+var url = "../../client/index.html";
 
 function makeAlias(object, name) {
     var fn = object ? object[name] : null;
@@ -39,7 +39,8 @@ socket.on(authMsg, function(msg){
 		xhttp.onreadystatechange = function() {
 			if (xhttp.readyState == 4 && xhttp.status == 200) {
 				$("content").innerHTML = xhttp.responseText;
-				eval($("scary").text);
+				eval($("scary1").text);
+				eval($("scary2").text);
 			}
 		};
 		xhttp.open("GET", url, true);
