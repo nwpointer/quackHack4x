@@ -8,13 +8,51 @@ var authMap = {};
 //clientMap ties between client ids and game names
 var clientMap = {};
 
+function addAuthorize(clientId, event) {
+  console.log("Client: "+clientId+" is requesting auth.");
+  var guid = event.split("_")[0];
+  var gameName = event.split("_")[1];
+  event = guid + '_auth';
+  clientMap[clientId] = gameName;
+  console.log("Now clientMap looks like this: ", clientMap);
+  if(authMap.gameName && authMap.gameName >= 2) {
+    console.log("Preventing auth, sending event "+event);
+    io.emit(event, false);
+    return;
+  }
+  else {
+    authMap.gameName ? authMap.gameName = 2 : authMap.gameName = 1;
+    console.log("Allowing auth, sending event "+event);
+    console.log("Number of players: "+authMap.gameName+", Game: "+gameName);
+    io.emit(event, true);
+    return;
+  }
+}
+function removeAuthorize(clientId) {
+  console.log("Client: "+clientId+" is requesting auth.");
+  var gameName = clientMap[clientId];
+  clientMap[clientId] = gameName;
+  if(authMap.gameName && authMap.gameName > 0) {
+    authMap.gameName--;
+  }
+  else if(authMap.gameName && authMap.gameName == 0){
+    delete authMap.gameName;
+  }
+  return;
+}
+
 app.use(express.static(__dirname + '/'));
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('*', function(req, res){
+  res.sendFile(__dirname +"/"+ request[request.length - 1]);
+});
+
 io.on('connection', function(socket){
+  //this is mystery code which allows one handler for all (non-default) events
   var onevent = socket.onevent;
   socket.onevent = function (packet) {
       var args = packet.data || [];
@@ -22,45 +60,23 @@ io.on('connection', function(socket){
       packet.data = ["*"].concat(args);
       onevent.call(this, packet);      // additional call to catch-all
   };
+  //end mystery code
 
   var clientId = socket.client.conn.id;
-
   console.log("Client: "+clientId+" has connected.");
-  clientMap.clientId = null;
+  clientMap[clientId] = null;
 
   socket.on('disconnect', function(){
-    //console.log("Trying to disconnect, this is: ", this);
-    console.log("Client: "+this.client.conn.id+" has disconnected.");
-    //delete clientMap.this.client.conn.id;
+    var clientId = this.client.conn.id;
+    console.log("Client: "+clientId+" has disconnected.");
+    removeAuthorize(clientId);
+    delete clientMap[clientId];
   });
   socket.on("*",function(event,data) {
       var clientId = this.client.conn.id;
-      console.log("Client: "+clientId+" has sent an event.");
       if(event.split("_").length > 1) {
-        console.log("Client: "+clientId+" is requesting auth.");
-        console.log("Here's the split event: ", event.split("_"));
-        var guid = event.split("_")[1];
-        var gameName = event.split("_")[1];
-        event = guid + '_auth';
-        clientMap.clientId = gameName;
-        console.log("Now clientMap looks like this: ", clientMap);
-        if(authMap.gameName && authMap.gameName < 2) {
-          authMap.gameName++;
-          console.log("Allowing auth");
-          io.emit(event, true);
-          return;
-        }
-        else if(authMap.gameName && authMap.gameName >= 2) {
-          console.log("Preventing auth");
-          io.emit(event, false);
-          return;
-        }
-        else {
-          console.log("Allowing auth");
-          authMap.gameName = 1;
-          io.emit(event, true);
-          return;
-        }
+        addAuthorize(clientId, event);
+        return;
       }
       console.log("Event: "+event);
       console.log("Data: "+data);
