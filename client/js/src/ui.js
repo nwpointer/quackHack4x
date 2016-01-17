@@ -153,7 +153,7 @@ var BottomBar = React.createClass({
                     <img id="turret-img" src={this.state.turretImg} alt="Plain Turret - 50g" id="trtbtn" style={{float:'right'}} />
                 </button>
             </div>
-        <div>
+        <div>What the FUCK
         <input id="inputBox"></input>
         <button id="sendMessage">Click Me Baby</button>
       </div>
