@@ -1,4 +1,11 @@
-var $ = document.getElementById;
+function makeAlias(object, name) {
+    var fn = object ? object[name] : null;
+    if (typeof fn == 'undefined') return function () {}
+    return function () {
+        return fn.apply(object, arguments)
+    }
+}
+$ = makeAlias(document, 'getElementById');
 
 var gameName = $("gameName").text;
 

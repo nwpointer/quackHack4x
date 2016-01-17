@@ -2,8 +2,14 @@ var socket = io();
 
 var url = "postAuth.html";
 
-
-var $ = document.getElementById;
+function makeAlias(object, name) {
+    var fn = object ? object[name] : null;
+    if (typeof fn == 'undefined') return function () {}
+    return function () {
+        return fn.apply(object, arguments)
+    }
+}
+$ = makeAlias(document, 'getElementById');
 
 
 //-----------We need a GUID to only listen to OUR response
