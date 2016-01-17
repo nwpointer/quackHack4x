@@ -1,10 +1,6 @@
 window.React = require('react');
 window.ReactDOM = require('react-dom');
-window.Howl = require('howl');
-
-var sound = new Howl({
-  urls: ['media/turret-shot.ogg']
-}).play();
+var howl = require('howler');
 
 var BottomBar = React.createClass({
 	getInitialState: function(){
@@ -40,6 +36,9 @@ var BottomBar = React.createClass({
         numGold: this.state.numGold - 50
       })
       this.countersChanged();
+      var sound = new howl.Howl({
+        urls: ['media/turret-shot.ogg']
+      }).play();
     }
   },
     
@@ -73,13 +72,13 @@ var BottomBar = React.createClass({
         })
     } else if (this.state.creepCount >= 20) {
         this.setState({
-            widthThree: widthThree + 10,
+            widthThree: this.state.widthThree + 10,
             widthTwo: 100,
             creepText: "3 Creeps Ready to Launch"
         })
     } else if (this.state.creepCount >= 10) {
         this.setState({
-            widthTwo: widthTwo + 10,
+            widthTwo: this.state.widthTwo + 10,
             widthOne: 100,
             creepText: "1 Creep Ready to Launch",
             creepDisabled: false
@@ -88,7 +87,7 @@ var BottomBar = React.createClass({
         this.setState({
             widthThree: 0,
             widthTwo: 0,
-            widthOne: widthOne + 10,
+            widthOne: this.state.widthOne + 10,
             creepText: "Charging the Creepers",
             creepDisabled: true
         })

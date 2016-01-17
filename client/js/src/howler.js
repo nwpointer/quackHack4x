@@ -8,6 +8,8 @@
  *  MIT License
  */
 
+var howler;
+
 (function() {
   // setup
   var cache = {};
@@ -1351,3 +1353,5 @@
   }
 
 })();
+
+module.requires= howler;
